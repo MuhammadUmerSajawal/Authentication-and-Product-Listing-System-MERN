@@ -13,6 +13,12 @@ function Dashboard() {
     const [newProduct, setNewProduct] = useState({ name: '', price: '', description: '' });
 
     const navigate = useNavigate();
+    const truncateDescription = (text, limit = 8) => {
+        if (!text) return '.....';
+        const words = text.trim().split(/\s+/);
+        if (words.length <= limit) return text;
+        return `${words.slice(0, limit).join(' ')} .....`;
+    };
 
     const fetchProducts = async () => {
         try {
@@ -130,10 +136,24 @@ function Dashboard() {
                                 products.map((product, index) => (
                                     <tr key={product._id || index}>
                                         <td className="px-4 py-3">{(index + 1) < 10 ? `0${index + 1}.` : `${index + 1}.`}</td>
-                                        <td className="py-3 fw-semibold">{product.name}</td>
+                                        <td className="py-3 fw-semibold">
+                                            <Button
+                                                variant="link"
+                                                className="p-0 text-decoration-none fw-semibold"
+                                                onClick={() => navigate(`/products/${product._id}`)}
+                                            >
+                                                {product.name}
+                                            </Button>
+                                        </td>
                                         <td className="py-3 fw-bold" style={{ color: '#396AFF' }}>${product.price}</td>
                                         <td className="py-3 fw-medium text-info">{product.createdBy}</td>
-                                        <td className="py-3 text-secondary">{product.description}</td>
+                                        <td
+                                            className="py-3 text-secondary"
+                                            title={product.description || ''}
+                                            style={{ maxWidth: '280px' }}
+                                        >
+                                            {truncateDescription(product.description)}
+                                        </td>
                                         <td className="py-3 text-center">
                                             {product.createdBy === loggedInUser && (
 

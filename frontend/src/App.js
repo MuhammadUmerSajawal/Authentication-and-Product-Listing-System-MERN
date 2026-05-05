@@ -6,6 +6,7 @@ import Dashboard from './Pages/Dashboard';
 import Signup from './Pages/Signup';
 import RefreshHandler from './RefreshHandler';
 import { useState } from 'react';
+import ProductDetails from './Pages/ProductDetails';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);  
@@ -20,6 +21,7 @@ function App() {
       <Routes> 
         <Route path="/" element={<Navigate to="/login"/>} />
         <Route path="/dashboard" element={<PrivateRoute element= {<Dashboard/>} />} />    {/* //when user is authenticated then it will render home page else it will redirect to login page */}
+        <Route path="/products/:id" element={<PrivateRoute element={<ProductDetails/>} />} />
         <Route path="/login" element={<Login/>} />
         <Route path="/signup" element={<Signup/>} />
       </Routes>
