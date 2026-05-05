@@ -68,18 +68,18 @@ function ProductDetails() {
 
                         {!isLoading && product && (
                             <div>
-                                <h1 className="m-0 mb-5 text-[42px] font-normal leading-[1.08] tracking-wide text-[#4a86e8]">
+                                <h1 className="m-0 mb-5 text-[42px] font-bold leading-[1.08] tracking-wide text-[#4a86e8]">
                                     {product.name}
                                 </h1>
-                                <p className="m-0 mb-2 text-[28px] font-normal leading-tight text-[#bb6ed6]">
+                                <p className="m-0 mb-2 text-[28px] font-bold leading-tight text-[#bb6ed6]">
                                     Price: {product.price ? `$${product.price}` : '----'}
                                 </p>
-                                <p className="m-0 mb-6 text-[28px] font-normal leading-tight text-[#bb6ed6]">
+                                <p className="m-0 mb-6 text-[28px] font-bold leading-tight text-[#bb6ed6]">
                                     Product by: {product.createdBy || '------'}
                                 </p>
 
                                 <div className="mb-8 max-w-[760px]">
-                                    <p className="m-0 whitespace-pre-line text-[28px] font-normal leading-tight text-[#4a86e8]">
+                                    <p className="m-0 whitespace-pre-line text-[22px] font-normal leading-tight text-[#4a86e8]">
                                         {`Desc: ${isDescriptionExpanded ? (product.description || '------------') : getCollapsedDescription(product.description)}`}
                                     </p>
                                     {product.description && product.description.trim().split(/\s+/).length > 18 && (

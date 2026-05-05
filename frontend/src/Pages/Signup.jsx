@@ -57,12 +57,12 @@ function Signup() {
     }
 
     return (
-        <div className="auth-page">
-            <div className='Container'>
-                <h1>Signup</h1>
-                <form onSubmit={handleSubmit}>
-                    <div>
-                        <label htmlFor='name'>Name</label>
+        <div className="flex min-h-screen w-full items-center justify-center bg-gray-100 px-4">
+            <div className="w-full max-w-md rounded-2xl bg-white p-10 shadow-[8px_8px_24px_-3px_rgba(0,0,0,0.1)]">
+                <h1 className="mb-8 text-center text-4xl font-semibold text-indigo-600">Signup</h1>
+                <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+                    <div className="flex flex-col gap-2">
+                        <label htmlFor='name' className="text-sm font-medium text-gray-800">Name</label>
                         <input
                             onChange={handleChange}
                             type='text'
@@ -70,20 +70,22 @@ function Signup() {
                             autoFocus
                             placeholder='Enter your name'
                             value= {signupInfo.name}
+                            className="w-full rounded-lg border border-gray-300 px-4 py-3 text-base outline-none transition focus:border-indigo-600 focus:shadow-[0_0_0_3px_rgba(79,70,229,0.1)]"
                         />
                     </div>
-                    <div>
-                        <label htmlFor='email'>Email</label>
+                    <div className="flex flex-col gap-2">
+                        <label htmlFor='email' className="text-sm font-medium text-gray-800">Email</label>
                         <input
                             onChange={handleChange}
                             type='email'
                             name='email'
                             placeholder='Enter your email'
                             value= {signupInfo.email}
+                            className="w-full rounded-lg border border-gray-300 px-4 py-3 text-base outline-none transition focus:border-indigo-600 focus:shadow-[0_0_0_3px_rgba(79,70,229,0.1)]"
                         />
                     </div>
-                    <div>
-                        <label htmlFor='password'>Password</label>
+                    <div className="flex flex-col gap-2">
+                        <label htmlFor='password' className="text-sm font-medium text-gray-800">Password</label>
                         <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
                             <input
                                 onChange={handleChange}
@@ -91,19 +93,22 @@ function Signup() {
                                 name='password'
                                 placeholder='Enter your password'
                                 value={signupInfo.password}
-                                style={{ width: '100%', paddingRight: '50px' }}
+                                className="w-full rounded-lg border border-gray-300 px-4 py-3 pr-12 text-base outline-none transition focus:border-indigo-600 focus:shadow-[0_0_0_3px_rgba(79,70,229,0.1)]"
                             />
                             <span 
                                 onClick={() => setShowPassword(!showPassword)}
                                 style={{ position: 'absolute', right: '10px', cursor: 'pointer', userSelect: 'none' }}
+                                className="m-0 text-sm font-semibold text-indigo-600"
                             >
                                 {showPassword ? 'Hide' : 'Show'}
                             </span>
                         </div>
                     </div>
-                    <button type='submit'>Signup</button>
-                    <span>Already have an account?
-                        <Link to="/login">Login</Link>
+                    <button type='submit' className="mt-2 rounded-lg bg-indigo-600 px-4 py-3 text-base font-semibold text-white transition hover:bg-indigo-700">
+                        Signup
+                    </button>
+                    <span className="m-0 mt-4 text-center text-sm text-gray-500">Already have an account?
+                        <Link to="/login" className="ml-1 font-semibold text-indigo-600 hover:underline">Login</Link>
                     </span>
                 </form>
                 <ToastContainer />
