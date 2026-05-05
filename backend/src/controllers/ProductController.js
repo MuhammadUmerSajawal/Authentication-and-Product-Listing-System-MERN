@@ -1,5 +1,5 @@
 // const jwt = require('jsonwebtoken');             //used for authentication and authorization
-const ProductModel = require("../Models/Product");
+const ProductModel = require("../models/Product");
 
 //logic for creating a product
 const createProduct = async (req, res) => {
@@ -54,6 +54,31 @@ const getProducts = async (req, res) => {
     }
 }
 
+const getProductById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const product = await ProductModel.findById(id);
+
+        if (!product) {
+            return res.status(404).json({
+                message: "Product not found",
+                success: false
+            });
+        }
+
+        res.status(200).json({
+            message: "Product fetched successfully",
+            success: true,
+            data: product
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Internal Server Error",
+            success: false
+        });
+    }
+}
+
 const deleteProduct = async (req, res) => {
     try {
         const { id } = req.params;
@@ -89,6 +114,7 @@ const deleteProduct = async (req, res) => {
 module.exports = {
     createProduct,
     getProducts,
+    getProductById,
     deleteProduct
 }
 

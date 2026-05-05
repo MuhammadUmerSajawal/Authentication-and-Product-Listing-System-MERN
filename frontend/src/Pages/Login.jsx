@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
-import { handleError, handleSuccess } from '../util';
+import { handleError, handleSuccess } from '../utils/toast';
 
 function Login() {
 
@@ -56,22 +56,23 @@ function Login() {
     }
 
     return (
-        <div className="auth-page">
-            <div className='Container'>
-                <h1>Login</h1>
-                <form onSubmit={handleLogin}>
-                    <div>
-                        <label htmlFor='email'>Email</label>
+        <div className="flex min-h-screen w-full items-center justify-center bg-gray-100 px-4">
+            <div className="w-full max-w-md rounded-2xl bg-white p-10 shadow-[8px_8px_24px_-3px_rgba(0,0,0,0.1)]">
+                <h1 className="mb-8 text-center text-4xl font-semibold text-indigo-600">Login</h1>
+                <form onSubmit={handleLogin} className="flex flex-col gap-5">
+                    <div className="flex flex-col gap-2">
+                        <label htmlFor='email' className="text-sm font-medium text-gray-800">Email</label>
                         <input
                             onChange={handleChange}
                             type='email'
                             name='email'
                             placeholder='Enter your email'
                             value={loginInfo.email}
+                            className="w-full rounded-lg border border-gray-300 px-4 py-3 text-base outline-none transition focus:border-indigo-600 focus:shadow-[0_0_0_3px_rgba(79,70,229,0.1)]"
                         />
                     </div>
-                    <div>
-                        <label htmlFor='password'>Password</label>
+                    <div className="flex flex-col gap-2">
+                        <label htmlFor='password' className="text-sm font-medium text-gray-800">Password</label>
                         <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
                             <input
                                 onChange={handleChange}
@@ -79,19 +80,22 @@ function Login() {
                                 name='password'
                                 placeholder='Enter your password'
                                 value={loginInfo.password}
-                                style={{ width: '100%', paddingRight: '50px' }}
+                                className="w-full rounded-lg border border-gray-300 px-4 py-3 pr-12 text-base outline-none transition focus:border-indigo-600 focus:shadow-[0_0_0_3px_rgba(79,70,229,0.1)]"
                             />
                             <span 
                                 onClick={() => setShowPassword(!showPassword)}
                                 style={{ position: 'absolute', right: '10px', cursor: 'pointer', userSelect: 'none' }}
+                                className="m-0 text-sm font-semibold text-indigo-600"
                             >
                                 {showPassword ? 'Hide' : 'Show'}
                             </span>
                         </div>
                     </div>
-                    <button type='submit'>Login</button>
-                    <span>Don't have an account?
-                        <Link to="/signup">Signup</Link>
+                    <button type='submit' className="mt-2 rounded-lg bg-indigo-600 px-4 py-3 text-base font-semibold text-white transition hover:bg-indigo-700">
+                        Login
+                    </button>
+                    <span className="m-0 mt-4 text-center text-sm text-gray-500">Don't have an account?
+                        <Link to="/signup" className="ml-1 font-semibold text-indigo-600 hover:underline">Signup</Link>
                     </span>
                 </form>
                 <ToastContainer />

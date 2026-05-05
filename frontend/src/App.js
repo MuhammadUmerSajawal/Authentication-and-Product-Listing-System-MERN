@@ -1,11 +1,11 @@
 import './App.css';
 import { Navigate,Route, Routes } from 'react-router-dom';
-import Login from './Pages/Login';
-// import Home from './Pages/Home';
-import Dashboard from './Pages/Dashboard';
-import Signup from './Pages/Signup';
-import RefreshHandler from './RefreshHandler';
+import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
+import Signup from './pages/Signup';
+import RefreshHandler from './components/RefreshHandler';
 import { useState } from 'react';
+import ProductDetails from './pages/ProductDetails';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);  
@@ -20,6 +20,7 @@ function App() {
       <Routes> 
         <Route path="/" element={<Navigate to="/login"/>} />
         <Route path="/dashboard" element={<PrivateRoute element= {<Dashboard/>} />} />    {/* //when user is authenticated then it will render home page else it will redirect to login page */}
+        <Route path="/products/:id" element={<PrivateRoute element={<ProductDetails/>} />} />
         <Route path="/login" element={<Login/>} />
         <Route path="/signup" element={<Signup/>} />
       </Routes>

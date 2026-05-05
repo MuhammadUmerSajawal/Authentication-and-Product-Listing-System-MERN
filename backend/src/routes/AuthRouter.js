@@ -1,7 +1,7 @@
 //this file routes requests to the specific controller, but only after validation
 
-const { signup, login } = require('../Controllers/AuthController');
-const { signupValidation, loginValidation } = require('../Middlewares/AuthValidation');
+const { signup, login } = require('../controllers/AuthController');
+const { signupValidation, loginValidation } = require('../middlewares/AuthValidation');
 
 const router = require('express').Router();
 
