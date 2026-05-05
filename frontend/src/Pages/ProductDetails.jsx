@@ -45,29 +45,29 @@ function ProductDetails() {
                 <button
                     type="button"
                     onClick={() => navigate('/dashboard')}
-                    className="mb-8 inline-block rounded-[4px] border border-[#4a86e8] bg-white px-4 py-2 font-mono text-[14px] font-semibold text-[#4a86e8] hover:bg-[#f3f8ff]"
+                    className="mb-8 inline-block rounded-[4px] border border-[#4a86e8] bg-white px-4 py-2 text-[14px] font-semibold text-[#4a86e8] hover:bg-[#f3f8ff]"
                 >
                     Back to Dashboard
                 </button>
 
                 <div className="mx-auto grid max-w-[1220px] grid-cols-1 gap-8 md:grid-cols-[420px_1fr] md:gap-12">
                     <div className="flex h-[460px] items-center justify-center border-[3px] border-[#4a86e8] bg-[#ceb7d8] px-6">
-                        <p className="m-0 text-center font-mono text-[34px] font-normal tracking-wide text-[#4a86e8]">
+                        <p className="m-0 text-center text-[34px] font-normal tracking-wide text-[#4a86e8]">
                             {product?.name || 'Product Name'}
                         </p>
                     </div>
 
                     <div className="pt-2">
                         {isLoading && (
-                            <p className="m-0 font-mono text-[24px] font-normal text-[#4a86e8]">Loading product...</p>
+                            <p className="m-0 text-[24px] font-normal text-[#4a86e8]">Loading product...</p>
                         )}
 
                         {!isLoading && errorMessage && (
-                            <p className="m-0 font-mono text-[20px] font-normal text-red-600">{errorMessage}</p>
+                            <p className="m-0 text-[20px] font-normal text-red-600">{errorMessage}</p>
                         )}
 
                         {!isLoading && product && (
-                            <div className="font-mono">
+                            <div>
                                 <h1 className="m-0 mb-5 text-[42px] font-normal leading-[1.08] tracking-wide text-[#4a86e8]">
                                     {product.name}
                                 </h1>
@@ -86,7 +86,7 @@ function ProductDetails() {
                                         <button
                                             type="button"
                                             onClick={() => setIsDescriptionExpanded((prev) => !prev)}
-                                            className="mt-2 border-0 bg-transparent p-0 font-mono text-[16px] font-semibold text-[#4a86e8] underline hover:text-[#3f78d3]"
+                                            className="mt-2 border-0 bg-transparent p-0 text-[16px] font-semibold text-[#4a86e8] underline hover:text-[#3f78d3]"
                                         >
                                             {isDescriptionExpanded ? 'Show less' : 'Show more'}
                                         </button>
@@ -95,7 +95,7 @@ function ProductDetails() {
 
                                 <button
                                     type="button"
-                                    className="inline-block rounded-[6px] border border-[#4a86e8] bg-[#4a86e8] px-8 py-3 font-mono text-[32px] font-normal text-[#dfc8e6] shadow-sm hover:bg-[#3f78d3]"
+                                    className="inline-block rounded-[6px] border border-[#4a86e8] bg-[#4a86e8] px-8 py-3 text-[32px] font-normal text-[#dfc8e6] shadow-sm hover:bg-[#3f78d3]"
                                 >
                                     Buy it Now
                                 </button>
