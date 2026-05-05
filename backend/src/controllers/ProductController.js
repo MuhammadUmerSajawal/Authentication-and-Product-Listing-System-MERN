@@ -1,5 +1,5 @@
 // const jwt = require('jsonwebtoken');             //used for authentication and authorization
-const ProductModel = require("../Models/Product");
+const ProductModel = require("../models/Product");
 
 //logic for creating a product
 const createProduct = async (req, res) => {

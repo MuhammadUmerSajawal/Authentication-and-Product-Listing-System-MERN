@@ -1,7 +1,7 @@
 //this file is for the product routes
 
-const { createProduct, getProducts, getProductById, deleteProduct } = require('../Controllers/ProductController');
-const { productValidation } = require('../Middlewares/ProductValidation');
+const { createProduct, getProducts, getProductById, deleteProduct } = require('../controllers/ProductController');
+const { productValidation } = require('../middlewares/ProductValidation');
 
 const router = require('express').Router();
 

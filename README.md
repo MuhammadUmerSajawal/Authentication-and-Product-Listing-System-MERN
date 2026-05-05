@@ -12,7 +12,7 @@ A full-stack MERN application with user authentication and a product listing das
 - Product deletion restricted to the product creator
 - Server-side validation with Joi
 - Toast notifications for user feedback
-- Responsive React UI with Bootstrap
+- Responsive React UI with Tailwind CSS
 
 ## Tech Stack
 
@@ -20,8 +20,8 @@ A full-stack MERN application with user authentication and a product listing das
 
 - React
 - React Router
-- React Bootstrap
-- Bootstrap
+- Tailwind CSS
+- React Bootstrap (modal/form components)
 - React Toastify
 - React Icons
 
@@ -39,22 +39,25 @@ A full-stack MERN application with user authentication and a product listing das
 
 ```text
 mern-auth-app/
-├── backend/
-│   ├── Controllers/
-│   ├── Middlewares/
-│   ├── Models/
-│   ├── Routes/
-│   ├── index.js
-│   └── package.json
-├── frontend/
-│   ├── public/
-│   ├── src/
-│   │   ├── Pages/
-│   │   ├── App.js
-│   │   └── index.js
-│   └── package.json
-├── package.json
-└── README.md
+|- backend/
+|  |- src/
+|  |  |- controllers/
+|  |  |- middlewares/
+|  |  |- models/
+|  |  |- routes/
+|  |  `- index.js
+|  `- package.json
+|- frontend/
+|  |- public/
+|  |- src/
+|  |  |- components/
+|  |  |- pages/
+|  |  |- utils/
+|  |  |- App.js
+|  |  `- index.js
+|  `- package.json
+|- package.json
+`- README.md
 ```
 
 ## Prerequisites
@@ -138,6 +141,7 @@ http://localhost:3000
 | Method | Endpoint | Description |
 | --- | --- | --- |
 | GET | `/products` | Get all products |
+| GET | `/products/:id` | Get a single product by id |
 | POST | `/products` | Create a new product |
 | DELETE | `/products/:id?requester=userName` | Delete a product created by the requester |
 
@@ -146,8 +150,9 @@ http://localhost:3000
 1. Sign up with your name, email, and password.
 2. Log in with your registered email and password.
 3. Add products from the dashboard.
-4. View the product list.
-5. Delete products that were created by your logged-in user.
+4. View products in list or grid mode.
+5. Open product details by clicking a product.
+6. Delete products that were created by your logged-in user.
 
 ## Notes
 

@@ -1,7 +1,7 @@
 //this file contains the logic for signup and login
 
 const bcrypt = require('bcrypt');                //used for encryption-decryption of password
-const UserModel = require("../Models/User");
+const UserModel = require("../models/User");
 const jwt = require('jsonwebtoken');             //used for authentication and authorization
 
 //logic for signup

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
 import { Modal, Form } from 'react-bootstrap';
 import { ToastContainer } from 'react-toastify';
-import { handleSuccess, handleError } from '../util';
+import { handleSuccess, handleError } from '../utils/toast';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { HiOutlineTrash, HiBars3, HiSquares2X2 } from 'react-icons/hi2';
 
