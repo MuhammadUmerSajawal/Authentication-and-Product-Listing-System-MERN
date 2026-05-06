@@ -126,10 +126,66 @@ const deleteProduct = async (req, res) => {
     }
 }
 
+const updateProduct = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { requester } = req.query;
+        const { name, price, description } = req.body;
+
+        if (!name || !price) {
+            return res.status(400).json({
+                message: "Name and price are required",
+                success: false
+            });
+        }
+
+        const product = await ProductModel.findById(id);
+
+        if (!product) {
+            return res.status(404).json({ message: "Product not found", success: false });
+        }
+
+        if (product.createdBy !== requester) {
+            return res.status(403).json({ message: "You are not authorized to edit this product", success: false });
+        }
+
+        product.name = name;
+        product.price = price;
+        product.description = description;
+
+        await product.save();
+
+        res.status(200).json({
+            message: "Product updated successfully",
+            success: true,
+            data: product
+        });
+    } catch (error) {
+        if (error.name === 'ValidationError') {
+            const messages = Object.values(error.errors).map(val => val.message);
+            return res.status(400).json({
+                message: messages.join(', '),
+                success: false
+            });
+        }
+        if (error.code === 11000) {
+            return res.status(400).json({
+                message: "Product with this name already exists",
+                success: false
+            });
+        }
+        res.status(500).json({
+            message: "Internal Server Error",
+            success: false
+        });
+    }
+}
+
 module.exports = {
     createProduct,
     getProducts,
     getProductById,
+    updateProduct,
     deleteProduct
 }
 

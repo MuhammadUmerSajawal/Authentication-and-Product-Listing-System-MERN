@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { handleError } from '../utils/toast';
+import { HiArrowLeft, HiShoppingBag, HiUserCircle, HiTag } from 'react-icons/hi2';
 
 function ProductDetails() {
     const { productName } = useParams();
@@ -40,53 +41,90 @@ function ProductDetails() {
     };
 
     return (
-        <div className="min-h-screen w-full bg-[#eef1f4] p-0">
-            <div className="min-h-screen border-[3px] border-[#4a86e8] p-4 sm:p-6 md:p-8">
-                <button
-                    type="button"
-                    onClick={() => navigate('/dashboard')}
-                    className="mb-8 inline-block rounded-[4px] border border-[#4a86e8] bg-white px-4 py-2 text-[14px] font-semibold text-[#4a86e8] hover:bg-[#f3f8ff]"
-                >
-                    Back to Dashboard
-                </button>
+        <div className="min-h-screen w-full bg-[#f4f4f4] px-4 py-6 text-[#262a33] sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-7xl">
+                <div className="mb-6 flex items-center justify-between">
+                    <button
+                        type="button"
+                        onClick={() => navigate('/dashboard')}
+                        className="inline-flex h-11 items-center gap-2 rounded-[8px] bg-white px-4 text-sm font-semibold text-[#5d6472] shadow-[0_10px_30px_rgba(20,25,35,0.08)] transition hover:text-[#3267ff]"
+                    >
+                        <HiArrowLeft size={18} />
+                        Back to Dashboard
+                    </button>
+                </div>
 
-                <div className="mx-auto grid max-w-[1220px] grid-cols-1 gap-8 md:grid-cols-[420px_1fr] md:gap-12">
-                    <div className="flex h-[460px] items-center justify-center border-[3px] border-[#4a86e8] bg-[#ceb7d8] px-6">
-                        <p className="m-0 text-center text-[34px] font-normal tracking-wide text-[#4a86e8]">
-                            {product?.name || 'Product Name'}
-                        </p>
-                    </div>
+                <div className="overflow-hidden rounded-[8px] bg-white shadow-[0_18px_45px_rgba(25,31,44,0.08)]">
+                    {isLoading && (
+                        <div className="flex min-h-[420px] items-center justify-center px-6 py-12">
+                            <p className="m-0 text-lg font-semibold text-[#9aa2af]">Loading product...</p>
+                        </div>
+                    )}
 
-                    <div className="pt-2">
-                        {isLoading && (
-                            <p className="m-0 text-[24px] font-normal text-[#4a86e8]">Loading product...</p>
-                        )}
+                    {!isLoading && errorMessage && (
+                        <div className="flex min-h-[420px] items-center justify-center px-6 py-12">
+                            <p className="m-0 rounded-[8px] bg-[#fff1f0] px-5 py-3 text-base font-semibold text-red-500">{errorMessage}</p>
+                        </div>
+                    )}
 
-                        {!isLoading && errorMessage && (
-                            <p className="m-0 text-[20px] font-normal text-red-600">{errorMessage}</p>
-                        )}
+                    {!isLoading && product && (
+                        <div className="grid grid-cols-1 lg:grid-cols-[420px_1fr]">
+                            <div className="border-b border-[#edf0f4] bg-[#fbfcfd] p-6 lg:border-b-0 lg:border-r">
+                                <div className="flex min-h-[420px] flex-col items-center justify-center rounded-[8px] border border-[#edf0f4] bg-white p-8 text-center">
+                                    <span className="mb-5 flex h-28 w-28 items-center justify-center rounded-full bg-[#eaf0ff] text-5xl font-bold text-[#3267ff]">
+                                        {product.name?.charAt(0)?.toUpperCase() || 'P'}
+                                    </span>
+                                    <p className="m-0 max-w-[280px] break-words text-2xl font-bold leading-tight text-[#323743]">
+                                        {product.name}
+                                    </p>
+                                    <p className="m-0 mt-3 text-sm font-semibold text-[#9aa2af]">
+                                        #{product._id?.slice(-8).toUpperCase()}
+                                    </p>
+                                </div>
+                            </div>
 
-                        {!isLoading && product && (
-                            <div>
-                                <h1 className="m-0 mb-5 text-[42px] font-bold leading-[1.08] tracking-wide text-[#4a86e8]">
-                                    {product.name}
-                                </h1>
-                                <p className="m-0 mb-2 text-[28px] font-bold leading-tight text-[#bb6ed6]">
-                                    Price: {product.price ? `$${product.price}` : '----'}
-                                </p>
-                                <p className="m-0 mb-6 text-[28px] font-bold leading-tight text-[#bb6ed6]">
-                                    Product by: {product.createdBy || '------'}
-                                </p>
+                            <div className="p-6 sm:p-8 lg:p-10">
+                                <div className="mb-7">
+                                    <p className="mb-2 inline-flex items-center rounded-full bg-[#edf4ff] px-3 py-1 text-xs font-bold uppercase text-[#3267ff]">
+                                        Product Detail
+                                    </p>
+                                    <h1 className="m-0 max-w-3xl break-words text-3xl font-bold leading-tight text-[#252934] sm:text-4xl">
+                                        {product.name}
+                                    </h1>
+                                </div>
 
-                                <div className="mb-8 max-w-[760px]">
-                                    <p className="m-0 whitespace-pre-line text-[22px] font-normal leading-tight text-[#4a86e8]">
-                                        {`Desc: ${isDescriptionExpanded ? (product.description || '------------') : getCollapsedDescription(product.description)}`}
+                                <div className="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                    <div className="rounded-[8px] border border-[#edf0f4] bg-[#fbfcfd] p-4">
+                                        <p className="mb-2 flex items-center gap-2 text-sm font-semibold text-[#9aa2af]">
+                                            <HiTag size={18} />
+                                            Price
+                                        </p>
+                                        <p className="m-0 text-2xl font-bold text-[#3267ff]">
+                                            {product.price ? `$${product.price}` : '----'}
+                                        </p>
+                                    </div>
+
+                                    <div className="rounded-[8px] border border-[#edf0f4] bg-[#fbfcfd] p-4">
+                                        <p className="mb-2 flex items-center gap-2 text-sm font-semibold text-[#9aa2af]">
+                                            <HiUserCircle size={18} />
+                                            Product by
+                                        </p>
+                                        <p className="m-0 truncate text-2xl font-bold text-[#323743]">
+                                            {product.createdBy || '------'}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="mb-8 rounded-[8px] border border-[#edf0f4] bg-white p-5">
+                                    <p className="mb-3 text-sm font-bold uppercase text-[#9aa2af]">Description</p>
+                                    <p className="m-0 whitespace-pre-line text-base font-medium leading-7 text-[#606875]">
+                                        {isDescriptionExpanded ? (product.description || '------------') : getCollapsedDescription(product.description)}
                                     </p>
                                     {product.description && product.description.trim().split(/\s+/).length > 18 && (
                                         <button
                                             type="button"
                                             onClick={() => setIsDescriptionExpanded((prev) => !prev)}
-                                            className="mt-2 border-0 bg-transparent p-0 text-[16px] font-semibold text-[#4a86e8] underline hover:text-[#3f78d3]"
+                                            className="mt-3 border-0 bg-transparent p-0 text-sm font-bold text-[#3267ff] transition hover:text-[#2556dc]"
                                         >
                                             {isDescriptionExpanded ? 'Show less' : 'Show more'}
                                         </button>
@@ -95,13 +133,14 @@ function ProductDetails() {
 
                                 <button
                                     type="button"
-                                    className="inline-block rounded-[6px] border border-[#4a86e8] bg-[#4a86e8] px-8 py-3 text-[32px] font-normal text-[#dfc8e6] shadow-sm hover:bg-[#3f78d3]"
+                                    className="inline-flex h-12 items-center justify-center gap-2 rounded-[8px] bg-[#3267ff] px-6 text-sm font-bold text-white shadow-[0_10px_24px_rgba(50,103,255,0.25)] transition hover:bg-[#2556dc]"
                                 >
+                                    <HiShoppingBag size={19} />
                                     Buy it Now
                                 </button>
                             </div>
-                        )}
-                    </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

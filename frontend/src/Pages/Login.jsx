@@ -40,6 +40,7 @@ function Login() {
             if (success) {
                 handleSuccess(message);
                 localStorage.setItem('loggedInUser', name);
+                localStorage.setItem('loggedInEmail', email);
                 localStorage.setItem('token', jwtToken);
                 setTimeout(() => {
                     navigate('/dashboard')
