@@ -21,6 +21,16 @@ function Dashboard() {
         return `${words.slice(0, limit).join(' ')} .....`;
     };
 
+    const getProductUrl = (productName) => {
+        const slug = productName
+            .trim()
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+
+        return `/products/${encodeURIComponent(slug)}`;
+    };
+
     const fetchProducts = async () => {
         try {
             const url = "http://localhost:8080/products";
@@ -50,7 +60,7 @@ function Dashboard() {
 
     const handleAddProduct = async (e) => {
         e.preventDefault();
-        const { name, price, description } = newProduct;
+        const { name, price } = newProduct;
         if (!name || !price) {
             handleError("Please fill all fields");
             return;
@@ -166,7 +176,7 @@ function Dashboard() {
                                                 <button
                                                     type="button"
                                                     className="m-0 bg-transparent p-0 font-semibold text-[#2563eb] no-underline hover:underline"
-                                                    onClick={() => navigate(`/products/${product._id}`)}
+                                                    onClick={() => navigate(getProductUrl(product.name))}
                                                 >
                                                     {product.name}
                                                 </button>
@@ -209,7 +219,7 @@ function Dashboard() {
                                     <div className="flex flex-col">
                                         <button
                                             type="button"
-                                            onClick={() => navigate(`/products/${product._id}`)}
+                                            onClick={() => navigate(getProductUrl(product.name))}
                                             className="relative m-0 flex h-[210px] w-full items-center justify-center border-2 border-[#4a86e8] bg-[#c9acd4] p-3 text-[22px] font-semibold text-[#4a86e8]"
                                         >
                                             <span className="max-w-[90%] break-words text-center leading-[1.2]">{product.name}</span>
@@ -218,7 +228,7 @@ function Dashboard() {
                                         <div className="mt-3">
                                             <button
                                                 type="button"
-                                                onClick={() => navigate(`/products/${product._id}`)}
+                                                onClick={() => navigate(getProductUrl(product.name))}
                                                 className="m-0 mb-1 bg-transparent p-0 text-left text-[22px] font-bold leading-[1.15] text-[#4a86e8] hover:underline"
                                             >
                                                 {product.name}
@@ -230,7 +240,7 @@ function Dashboard() {
                                             <button
                                                 type="button"
                                                 className="m-0 bg-transparent p-0 font-semibold text-[#2563eb] no-underline hover:underline"
-                                                onClick={() => navigate(`/products/${product._id}`)}
+                                                onClick={() => navigate(getProductUrl(product.name))}
                                             >
                                                 View
                                             </button>

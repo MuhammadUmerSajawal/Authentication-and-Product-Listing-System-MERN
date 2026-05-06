@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { handleError } from '../utils/toast';
 
 function ProductDetails() {
-    const { id } = useParams();
+    const { productName } = useParams();
     const navigate = useNavigate();
     const [product, setProduct] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -13,7 +13,7 @@ function ProductDetails() {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/products/${id}`);
+                const response = await fetch(`http://localhost:8080/products/${productName}`);
                 const result = await response.json();
 
                 if (result.success) {
@@ -30,7 +30,7 @@ function ProductDetails() {
         };
 
         fetchProduct();
-    }, [id]);
+    }, [productName]);
 
     const getCollapsedDescription = (text, limit = 18) => {
         if (!text) return '------------';

@@ -20,7 +20,7 @@ function App() {
       <Routes> 
         <Route path="/" element={<Navigate to="/login"/>} />
         <Route path="/dashboard" element={<PrivateRoute element= {<Dashboard/>} />} />    {/* //when user is authenticated then it will render home page else it will redirect to login page */}
-        <Route path="/products/:id" element={<PrivateRoute element={<ProductDetails/>} />} />
+        <Route path="/products/:productName" element={<PrivateRoute element={<ProductDetails/>} />} />
         <Route path="/login" element={<Login/>} />
         <Route path="/signup" element={<Signup/>} />
       </Routes>

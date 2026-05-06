@@ -1,5 +1,12 @@
 // const jwt = require('jsonwebtoken');             //used for authentication and authorization
+const mongoose = require("mongoose");
 const ProductModel = require("../models/Product");
+
+const slugify = (value) => value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 
 //logic for creating a product
 const createProduct = async (req, res) => {
@@ -57,7 +64,16 @@ const getProducts = async (req, res) => {
 const getProductById = async (req, res) => {
     try {
         const { id } = req.params;
-        const product = await ProductModel.findById(id);
+        let product = null;
+
+        if (mongoose.Types.ObjectId.isValid(id)) {
+            product = await ProductModel.findById(id);
+        }
+
+        if (!product) {
+            const products = await ProductModel.find();
+            product = products.find((item) => slugify(item.name) === id || item.name === id);
+        }
 
         if (!product) {
             return res.status(404).json({
@@ -101,7 +117,6 @@ const deleteProduct = async (req, res) => {
                 success: true
             })
     } catch (error) {
-
 
         res.status(500)
             .json({
