@@ -4,8 +4,10 @@ const express = require('express');                            // importing expr
 const app = express();                                         //express app initialized
 const bodyParser = require('body-parser');                     //to get data body from frontend
 const cors = require('cors');                                  // to allow requests from other origins/ports
+const path = require('path');
 const AuthRouter = require('./routes/AuthRouter');
 const ProductRouter = require('./routes/ProductRouter');
+const ReviewRouter = require('./routes/ReviewRouter');
 
 require('dotenv').config();                                    // loading environment variables from .env file
 require('./models/db');                                        // importing the database connection module
@@ -18,8 +20,10 @@ app.get('/ping', (req,res) => {
 
 app.use(bodyParser.json());
 app.use(cors());
+app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 app.use('/auth', AuthRouter);
 app.use('/products', ProductRouter);
+app.use('/reviews', ReviewRouter);
 
 
 app.listen(PORT, () => (

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { handleError } from '../utils/toast';
 import { HiArrowLeft, HiShoppingBag, HiUserCircle, HiTag } from 'react-icons/hi2';
+import Footer from '../components/Footer';
 
 function ProductDetails() {
     const { productName } = useParams();
@@ -143,6 +144,7 @@ function ProductDetails() {
                     )}
                 </div>
             </div>
+            <Footer />
         </div>
     );
 }

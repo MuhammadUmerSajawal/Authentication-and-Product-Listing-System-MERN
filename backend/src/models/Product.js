@@ -1,7 +1,6 @@
 //product schema
 
 const mongoose = require('mongoose');
-const { create } = require('./User');
 const Schema = mongoose.Schema;
 
 const ProductSchema = new Schema({
@@ -19,6 +18,46 @@ const ProductSchema = new Schema({
     description: {
         type: String,
         required: false,
+    },
+    images: {
+        type: [String],
+        required: true,
+        validate: {
+            validator: (images) => images.length > 0,
+            message: 'At least one product image is required',
+        },
+    },
+    sizes: [
+        {
+            size: {
+                type: String,
+                required: true,
+                trim: true,
+            },
+            stock: {
+                type: Number,
+                required: true,
+                min: 0,
+                default: 0,
+            },
+        }
+    ],
+    category: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    subCategory: {
+        type: String,
+        trim: true,
+    },
+    averageRating: {
+        type: Number,
+        default: 0,
+    },
+    totalReviews: {
+        type: Number,
+        default: 0,
     },
     createdBy: {
         type: String,

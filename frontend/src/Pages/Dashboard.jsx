@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Modal, Form } from 'react-bootstrap';
 import { ToastContainer } from 'react-toastify';
 import { handleSuccess, handleError } from '../utils/toast';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { HiOutlineTrash, HiBars3, HiSquares2X2, HiPlus, HiArrowRightOnRectangle, HiEye, HiMagnifyingGlass, HiChevronDown, HiPencilSquare } from 'react-icons/hi2';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import { HiOutlineTrash, HiBars3, HiSquares2X2, HiPlus, HiArrowRightOnRectangle, HiEye, HiMagnifyingGlass, HiChevronDown, HiPencilSquare, HiShoppingBag } from 'react-icons/hi2';
+
+const defaultSizes = ['S', 'M', 'L', 'XL', 'XXL'];
+const createEmptySizes = () => defaultSizes.map((size) => ({ size, stock: 0 }));
 
 function Dashboard() {
     const [loggedInUser, setLoggedInUser] = useState('');
     const [products, setProducts] = useState([]);
     const [showModal, setShowModal] = useState(false);              //used for showing the modal when the user clicks on add product button or edit product button
-    const [newProduct, setNewProduct] = useState({ name: '', price: '', description: '' });
+    const [newProduct, setNewProduct] = useState({ name: '', price: '', description: '', images: [], sizes: createEmptySizes(), category: '', subCategory: '' });
     const [editingProduct, setEditingProduct] = useState(null);
     const [viewMode, setViewMode] = useState('list');
     const [searchTerm, setSearchTerm] = useState('');
@@ -25,16 +30,6 @@ function Dashboard() {
         return `${words.slice(0, limit).join(' ')} .....`;
     };
 
-    const getProductUrl = (productName) => {
-        const slug = productName
-            .trim()
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/^-+|-+$/g, '');
-
-        return `/products/${encodeURIComponent(slug)}`;
-    };
-
     const getProductTone = (index) => {
         const tones = [
             'bg-[#fff1f0] text-[#d04c3f]',
@@ -47,6 +42,14 @@ function Dashboard() {
         return tones[index % tones.length];
     };
 
+    const getProductImageUrl = (product) => {
+        const image = product.images?.[0];
+        if (!image) return '';
+        if (image.startsWith('http') || image.startsWith('/static')) return image;
+        if (image.startsWith('/uploads')) return `http://localhost:8080${image}`;
+        return image;
+    };
+
     const filteredProducts = products.filter((product) => {
         const searchWords = searchTerm
             .trim()
@@ -56,8 +59,8 @@ function Dashboard() {
 
         if (searchWords.length === 0) return true;
 
-        const searchableText = String(product.name || '').toLowerCase();
-
+        const searchableText = `${product.name || ''} ${product.category || ''} ${product.subCategory || ''}`.toLowerCase();
+        
         return searchWords.every((word) => searchableText.includes(word));
     });
 
@@ -74,11 +77,20 @@ function Dashboard() {
         }
     }
 
+    const location = useLocation();
+
     useEffect(() => {
         setLoggedInUser(localStorage.getItem('loggedInUser'));
         setLoggedInEmail(localStorage.getItem('loggedInEmail'));
         fetchProducts();
-    }, [])
+
+        // Check for search query in URL
+        const params = new URLSearchParams(location.search);
+        const search = params.get('search');
+        if (search) {
+            setSearchTerm(search);
+        }
+    }, [location.search])
 
     const handleLogout = () => {
         localStorage.removeItem('token');
@@ -92,7 +104,7 @@ function Dashboard() {
 
     const openAddProductModal = () => {
         setEditingProduct(null);
-        setNewProduct({ name: '', price: '', description: '' });
+        setNewProduct({ name: '', price: '', description: '', images: [], sizes: createEmptySizes(), category: '', subCategory: '' });
         setShowModal(true);
     };
 
@@ -101,35 +113,66 @@ function Dashboard() {
         setNewProduct({
             name: product.name || '',
             price: product.price || '',
-            description: product.description || ''
+            description: product.description || '',
+            images: [],
+            sizes: product.sizes?.length ? product.sizes : createEmptySizes(),
+            category: product.category || '',
+            subCategory: product.subCategory || ''
         });
         setShowModal(true);
     };
 
-    const closeProductModal = () => {
+    const closeProductModal = () => {            // used to close the modal & reset all states
         setShowModal(false);
         setEditingProduct(null);
-        setNewProduct({ name: '', price: '', description: '' });
+        setNewProduct({ name: '', price: '', description: '', images: [], sizes: createEmptySizes(), category: '', subCategory: '' });
+    };
+
+    const handleSizeStockChange = (index, value) => {
+        const nextSizes = newProduct.sizes.map((item, itemIndex) => (
+            itemIndex === index ? { ...item, stock: value } : item
+        ));
+        setNewProduct({ ...newProduct, sizes: nextSizes });
     };
 
     const handleProductSubmit = async (e) => {
         e.preventDefault();
         const { name, price } = newProduct;
+        const isEditing = Boolean(editingProduct);
+
         if (!name || !price) {
             handleError("Please fill all fields");
             return;
         }
+        if (!isEditing && newProduct.images.length === 0) {
+            handleError("Please select at least one product image");
+            return;
+        }
         try {
-            const isEditing = Boolean(editingProduct);
             const url = isEditing
                 ? `http://localhost:8080/products/${editingProduct._id}?requester=${loggedInUser}`
                 : "http://localhost:8080/products";
+            const productData = new FormData();
+
+            productData.append('name', newProduct.name);
+            productData.append('price', newProduct.price);
+            productData.append('description', newProduct.description);
+            productData.append('category', newProduct.category);
+            productData.append('subCategory', newProduct.subCategory);
+            productData.append('sizes', JSON.stringify(newProduct.sizes.map((item) => ({
+                size: item.size,
+                stock: Number(item.stock) || 0
+            }))));
+            if (!isEditing) {
+                productData.append('createdBy', loggedInUser);
+            }
+            newProduct.images.forEach((image) => {
+                productData.append('images', image);
+            });
+
             const response = await fetch(url, {
                 method: isEditing ? "PUT" : "POST",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(isEditing ? newProduct : { ...newProduct, createdBy: loggedInUser })
+                body: productData
             });
             const result = await response.json();
             const { success, message, error } = result;
@@ -168,54 +211,15 @@ function Dashboard() {
     }
 
     return (
-        <div className="min-h-screen w-full bg-[#f4f4f4] px-4 py-6 text-[#262a33] sm:px-6 lg:px-8">
-            <div className="mx-auto max-w-7xl">
-                <div className="mb-7 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                    <div className="relative w-full max-w-xl">
-                        <HiMagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 text-[#b8bec8]" size={20} />
-                        <input
-                            type="search"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            placeholder="Search"
-                            className="h-12 w-full rounded-full border border-transparent bg-white pl-12 pr-4 text-sm font-medium text-[#323743] shadow-[0_10px_30px_rgba(20,25,35,0.08)] outline-none transition placeholder:text-[#b8bec8] focus:border-[#3267ff]"
-                        />
-                    </div>
-
-                    <div className="flex items-center justify-between gap-3 sm:justify-end">
-                        <div className="relative">
-                            <button
-                                type="button"
-                                className="flex h-14 min-w-0 items-center gap-3 rounded-[8px] bg-white px-3 shadow-[0_10px_30px_rgba(20,25,35,0.08)] transition hover:bg-[#fbfcff]"
-                                onClick={() => setIsProfileOpen((prev) => !prev)}
-                                aria-expanded={isProfileOpen}
-                                aria-haspopup="menu"
-                            >
-                                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#eaf0ff] text-sm font-bold text-[#3267ff]">
-                                    {loggedInUser?.charAt(0)?.toUpperCase() || 'U'}
-                                </span>
-                                <span className="min-w-0 text-left">
-                                    <span className="block max-w-[150px] truncate text-sm font-bold leading-tight text-[#323743]">{loggedInUser || 'User'}</span>
-                                    <span className="block max-w-[150px] truncate text-xs font-medium leading-tight text-[#9aa2af]">{loggedInEmail || 'Logged in'}</span>
-                                </span>
-                                <HiChevronDown className={`shrink-0 text-[#9aa2af] transition ${isProfileOpen ? 'rotate-180' : ''}`} size={16} />
-                            </button>
-
-                            {isProfileOpen && (
-                                <div className="absolute right-0 z-20 mt-2 w-44 rounded-[8px] border border-[#edf0f4] bg-white p-2 shadow-[0_18px_45px_rgba(25,31,44,0.14)]">
-                                    <button
-                                        type="button"
-                                        className="flex w-full items-center gap-2 rounded-[6px] px-3 py-2 text-left text-sm font-semibold text-[#5d6472] transition hover:bg-[#fff1f0] hover:text-red-500"
-                                        onClick={handleLogout}
-                                    >
-                                        <HiArrowRightOnRectangle size={18} />
-                                        Logout
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
+        <div className="min-h-screen w-full bg-[#f8f9fa]">
+            <Header 
+                searchTerm={searchTerm} 
+                onSearchChange={setSearchTerm} 
+                loggedInUser={loggedInUser}
+                loggedInEmail={loggedInEmail}
+                handleLogout={handleLogout}
+            />
+            <div className="mx-auto max-w-[1600px] px-4 py-6 text-[#262a33] sm:px-6 lg:px-8">
 
                 <div className="rounded-[8px] bg-white shadow-[0_18px_45px_rgba(25,31,44,0.08)]">
                     <div className="flex flex-col gap-4 border-b border-[#edf0f4] px-5 py-5 lg:flex-row lg:items-center lg:justify-between">
@@ -278,10 +282,18 @@ function Dashboard() {
                                                     <button
                                                         type="button"
                                                         className="m-0 flex items-center gap-3 bg-transparent p-0 text-left"
-                                                        onClick={() => navigate(getProductUrl(product.name))}
+                                                        onClick={() => navigate(`/productpage/${product._id}`)}
                                                     >
-                                                        <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold ${getProductTone(index)}`}>
-                                                            {product.name?.charAt(0)?.toUpperCase() || 'P'}
+                                                        <span className={`flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full text-sm font-bold ${getProductImageUrl(product) ? 'bg-white' : getProductTone(index)}`}>
+                                                            {getProductImageUrl(product) ? (
+                                                                <img
+                                                                    src={getProductImageUrl(product)}
+                                                                    alt={product.name || 'Product'}
+                                                                    className="h-full w-full object-cover"
+                                                                />
+                                                            ) : (
+                                                                product.name?.charAt(0)?.toUpperCase() || 'P'
+                                                            )}
                                                         </span>
                                                         <span className="max-w-[210px] truncate text-sm font-bold text-[#323743]">{product.name}</span>
                                                     </button>
@@ -302,7 +314,7 @@ function Dashboard() {
                                                         <button
                                                             type="button"
                                                             className="flex h-9 w-9 items-center justify-center rounded-md text-[#9aa2af] transition hover:bg-[#edf4ff] hover:text-[#3267ff]"
-                                                            onClick={() => navigate(getProductUrl(product.name))}
+                                                            onClick={() => navigate(`/productpage/${product._id}`)}
                                                             title="View product"
                                                         >
                                                             <HiEye size={18} />
@@ -342,36 +354,58 @@ function Dashboard() {
                             </table>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-4 p-5">
+                        <div className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-5 p-5">
                             {filteredProducts && filteredProducts.length > 0 ? (
                                 filteredProducts.map((product, index) => (
-                                    <div key={product._id || index} className="rounded-[8px] border border-[#edf0f4] bg-[#fbfcfd] p-4 transition hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(25,31,44,0.08)]">
+                                    <div key={product._id || index} className="group overflow-hidden rounded-[8px] border border-[#edf0f4] bg-white transition hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(25,31,44,0.08)]">
                                         <button
                                             type="button"
-                                            onClick={() => navigate(getProductUrl(product.name))}
-                                            className="m-0 flex w-full items-center gap-3 bg-transparent p-0 text-left"
+                                            onClick={() => navigate(`/productpage/${product._id}`)}
+                                            className="relative block w-full bg-[#f6f7f9] p-0"
                                         >
-                                            <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-base font-bold ${getProductTone(index)}`}>
-                                                {product.name?.charAt(0)?.toUpperCase() || 'P'}
-                                            </span>
-                                            <span className="min-w-0">
-                                                <span className="block truncate text-base font-bold text-[#323743]">{product.name}</span>
-                                                <span className="block text-sm font-semibold text-[#3267ff]">${product.price}</span>
+                                            <div className="flex aspect-[4/5] w-full items-center justify-center overflow-hidden">
+                                                {getProductImageUrl(product) ? (
+                                                    <img
+                                                        src={getProductImageUrl(product)}
+                                                        alt={product.name || 'Product'}
+                                                        className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]"
+                                                    />
+                                                ) : (
+                                                    <span className={`flex h-16 w-16 items-center justify-center rounded-full text-xl font-bold ${getProductTone(index)}`}>
+                                                        {product.name?.charAt(0)?.toUpperCase() || 'P'}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <span className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-[#9aa2af] shadow-sm">
+                                                <HiEye size={16} />
                                             </span>
                                         </button>
-                                        <p className="mb-1 mt-4 text-sm font-medium text-[#9aa2af]">{truncateDescription(product.description, 9)}</p>
-                                        <p className="mb-4 text-sm font-semibold text-[#606875]">By: {product.createdBy}</p>
-                                        <div className="flex items-center justify-between border-t border-[#edf0f4] pt-3">
-                                            <button
-                                                type="button"
-                                                className="inline-flex items-center gap-2 rounded-md px-2 py-1 text-sm font-semibold text-[#3267ff] transition hover:bg-[#edf4ff]"
-                                                onClick={() => navigate(getProductUrl(product.name))}
+
+                                        <div className="p-3">
+                                            <h4 className="mb-2 line-clamp-2 min-h-[40px] text-sm font-bold leading-5 text-[#323743]">
+                                                {product.name}
+                                            </h4>
+                                            <p
+                                                className="mb-3 line-clamp-2 min-h-[36px] text-xs font-medium leading-[18px] text-[#9aa2af]"
+                                                title={product.description || ''}
                                             >
-                                                <HiEye size={17} />
-                                                View
-                                            </button>
+                                                {truncateDescription(product.description, 10)}
+                                            </p>
+                                            <p className="mb-1 text-xs font-medium text-[#9aa2af]">Price</p>
+                                            <div className="flex items-center justify-between gap-3">
+                                                <p className="m-0 text-base font-bold text-[#323743]">${product.price}</p>
+                                                <button
+                                                    type="button"
+                                                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-[#3267ff] text-white shadow-[0_10px_20px_rgba(50,103,255,0.22)] transition hover:bg-[#2556dc]"
+                                                    onClick={() => navigate(`/productpage/${product._id}`)}
+                                                    title="View product"
+                                                >
+                                                    <HiShoppingBag size={18} />
+                                                </button>
+                                            </div>
+
                                             {product.createdBy === loggedInUser && (
-                                                <div className="flex items-center gap-1">
+                                                <div className="mt-3 flex items-center justify-end gap-1 border-t border-[#edf0f4] pt-3">
                                                     <button
                                                         type="button"
                                                         className="flex h-8 w-8 items-center justify-center rounded-md text-[#9aa2af] transition hover:bg-[#fff8e8] hover:text-[#c6821c]"
@@ -437,6 +471,58 @@ function Dashboard() {
                                 onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
                             />
                         </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Category</Form.Label>
+                            <Form.Control
+                                type="text"
+                                placeholder="Enter category (e.g. Men Fashion)"
+                                value={newProduct.category}
+                                onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
+                                required
+                            />
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Sub Category</Form.Label>
+                            <Form.Control
+                                type="text"
+                                placeholder="Enter sub category (optional)"
+                                value={newProduct.subCategory}
+                                onChange={(e) => setNewProduct({ ...newProduct, subCategory: e.target.value })}
+                            />
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Sizes & Stock</Form.Label>
+                            <div className="grid gap-2">
+                                {newProduct.sizes.map((item, index) => (
+                                    <div key={item.size} className="grid grid-cols-[72px_1fr] items-center gap-3">
+                                        <span className="rounded-[8px] bg-[#f6f7f9] px-3 py-2 text-center text-sm font-semibold text-[#323743]">
+                                            {item.size}
+                                        </span>
+                                        <Form.Control
+                                            type="number"
+                                            min="0"
+                                            placeholder="Stock"
+                                            value={item.stock}
+                                            onChange={(e) => handleSizeStockChange(index, e.target.value)}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>{editingProduct ? 'Product Images (optional)' : 'Product Images'}</Form.Label>
+                            <Form.Control
+                                type="file"
+                                accept="image/*"
+                                multiple
+                                onChange={(e) => setNewProduct({ ...newProduct, images: Array.from(e.target.files) })}
+                            />
+                            {editingProduct && (
+                                <Form.Text className="text-muted">
+                                    Leave empty to keep the current images.
+                                </Form.Text>
+                            )}
+                        </Form.Group>
                         <div className="grid">
                             <button type="submit" className="rounded-[8px] bg-[#3267ff] py-2 font-semibold text-white hover:bg-[#2556dc]">
                                 {editingProduct ? 'Save Changes' : 'Add Product'}
@@ -447,6 +533,7 @@ function Dashboard() {
             </Modal>
 
             <ToastContainer />
+            <Footer />
         </div>
     )
 }
