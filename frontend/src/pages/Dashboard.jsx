@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from "react-router-dom";
 import { Modal, Form } from 'react-bootstrap';
-import { ToastContainer } from 'react-toastify';
 import { handleSuccess, handleError } from '../utils/toast';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { HiOutlineTrash, HiBars3, HiSquares2X2, HiPlus, HiArrowRightOnRectangle, HiEye, HiMagnifyingGlass, HiChevronDown, HiPencilSquare, HiShoppingBag } from 'react-icons/hi2';
+import { HiOutlineTrash, HiBars3, HiSquares2X2, HiPlus, HiArrowRightOnRectangle, HiEye, HiMagnifyingGlass, HiChevronDown, HiPencilSquare, HiShoppingBag, HiStar } from 'react-icons/hi2';
 
 const defaultSizes = ['S', 'M', 'L', 'XL', 'XXL'];
 const createEmptySizes = () => defaultSizes.map((size) => ({ size, stock: 0 }));
@@ -382,6 +381,11 @@ function Dashboard() {
                                         </button>
 
                                         <div className="p-3">
+                                            <div className="flex items-center gap-1 text-yellow-400 mb-1.5">
+                                                <HiStar size={12} className="fill-current" />
+                                                <span className="text-[10px] font-bold text-gray-800">{(product.averageRating || 0).toFixed(1)}</span>
+                                                <span className="text-[10px] font-medium text-gray-400">({product.totalReviews || 0})</span>
+                                            </div>
                                             <h4 className="mb-2 line-clamp-2 min-h-[40px] text-sm font-bold leading-5 text-[#323743]">
                                                 {product.name}
                                             </h4>
@@ -532,7 +536,7 @@ function Dashboard() {
                 </Modal.Body>
             </Modal>
 
-            <ToastContainer />
+
             <Footer />
         </div>
     )

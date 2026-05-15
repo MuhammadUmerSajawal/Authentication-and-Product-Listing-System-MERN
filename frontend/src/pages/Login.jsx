@@ -1,78 +1,65 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
 import { handleError, handleSuccess } from '../utils/toast';
 
-function Signup() {
+function Login() {
 
-    const [signupInfo, setSignupInfo] = useState({
-        name: '',
+    const [loginInfo, setLoginInfo] = useState({
         email: '',
         password: ''
     })
     const [showPassword, setShowPassword] = useState(false);
 
-      
-    console.log('signupInfo -> ', signupInfo)
-
     const navigate = useNavigate();
+
     const handleChange = (e) => {
         const { name, value } = e.target;
-        const copySignupInfo = { ...signupInfo };
-        copySignupInfo[name] = value;
-        setSignupInfo(copySignupInfo);
+        const copyLoginInfo = { ...loginInfo };
+        copyLoginInfo[name] = value;
+        setLoginInfo(copyLoginInfo);
     }
 
-    const handleSubmit = async (e)=>{
-        e.preventDefault();                                             //prevent default page reload
-        const {name, email, password} = signupInfo;
-        if(!name || !email || !password){
-            return handleError("Please fill all the required fields.");
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        const { email, password } = loginInfo;
+        if (!email || !password) {
+            return handleError('email and password are required')
         }
-        try{
-            const url = "http://localhost:8080/auth/signup";             //api call
+        try {
+            const url = "http://localhost:8080/auth/login";
             const response = await fetch(url, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
+                    'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(signupInfo),
+                body: JSON.stringify(loginInfo)
             });
             const result = await response.json();
-            const {success, message, error} = result;
-            if(success){                                                //success message and redirecting to login page
+            const { success, message, jwtToken, name, error } = result;
+            if (success) {
                 handleSuccess(message);
-                setTimeout(()=>{
-                    navigate("/login");
+                localStorage.setItem('loggedInUser', name);
+                localStorage.setItem('loggedInEmail', email);
+                localStorage.setItem('token', jwtToken);
+                setTimeout(() => {
+                    navigate('/dashboard')
                 }, 1000)
-            }else if (error){                                           //error message from joi validation
+            } else if (error) {
                 const details = error?.details[0].message;
                 handleError(details);
-            }else if (!success){
+            } else if (!success) {
                 handleError(message);
             }
-        }catch(error){
-            handleError(error)
+        } catch (err) {
+            handleError(err);
         }
     }
 
     return (
         <div className="flex min-h-screen w-full items-center justify-center bg-gray-100 px-4">
             <div className="w-full max-w-md rounded-2xl bg-white p-10 shadow-[8px_8px_24px_-3px_rgba(0,0,0,0.1)]">
-                <h1 className="mb-8 text-center text-4xl font-semibold text-indigo-600">Signup</h1>
-                <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-                    <div className="flex flex-col gap-2">
-                        <label htmlFor='name' className="text-sm font-medium text-gray-800">Name</label>
-                        <input
-                            onChange={handleChange}
-                            type='text'
-                            name='name'
-                            autoFocus
-                            placeholder='Enter your name'
-                            value= {signupInfo.name}
-                            className="w-full rounded-lg border border-gray-300 px-4 py-3 text-base outline-none transition focus:border-indigo-600 focus:shadow-[0_0_0_3px_rgba(79,70,229,0.1)]"
-                        />
-                    </div>
+                <h1 className="mb-8 text-center text-4xl font-semibold text-indigo-600">Login</h1>
+                <form onSubmit={handleLogin} className="flex flex-col gap-5">
                     <div className="flex flex-col gap-2">
                         <label htmlFor='email' className="text-sm font-medium text-gray-800">Email</label>
                         <input
@@ -80,7 +67,7 @@ function Signup() {
                             type='email'
                             name='email'
                             placeholder='Enter your email'
-                            value= {signupInfo.email}
+                            value={loginInfo.email}
                             className="w-full rounded-lg border border-gray-300 px-4 py-3 text-base outline-none transition focus:border-indigo-600 focus:shadow-[0_0_0_3px_rgba(79,70,229,0.1)]"
                         />
                     </div>
@@ -92,7 +79,7 @@ function Signup() {
                                 type={showPassword ? 'text' : 'password'}
                                 name='password'
                                 placeholder='Enter your password'
-                                value={signupInfo.password}
+                                value={loginInfo.password}
                                 className="w-full rounded-lg border border-gray-300 px-4 py-3 pr-12 text-base outline-none transition focus:border-indigo-600 focus:shadow-[0_0_0_3px_rgba(79,70,229,0.1)]"
                             />
                             <span 
@@ -105,17 +92,17 @@ function Signup() {
                         </div>
                     </div>
                     <button type='submit' className="mt-2 rounded-lg bg-indigo-600 px-4 py-3 text-base font-semibold text-white transition hover:bg-indigo-700">
-                        Signup
+                        Login
                     </button>
-                    <span className="m-0 mt-4 text-center text-sm text-gray-500">Already have an account?
-                        <Link to="/login" className="ml-1 font-semibold text-indigo-600 hover:underline">Login</Link>
+                    <span className="m-0 mt-4 text-center text-sm text-gray-500">Don't have an account?
+                        <Link to="/signup" className="ml-1 font-semibold text-indigo-600 hover:underline">Signup</Link>
                     </span>
                 </form>
-                <ToastContainer />
+
             </div>
         </div>
     )
 }
 
 
-export default Signup
+export default Login

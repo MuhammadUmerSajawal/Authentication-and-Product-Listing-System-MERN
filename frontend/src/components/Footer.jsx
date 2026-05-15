@@ -19,16 +19,16 @@ const Footer = () => {
                             We have clothes that suits your style and which you're proud to wear. From women to men.
                         </p>
                         <div className="flex gap-4">
-                            <a href="#" className="flex items-center justify-center w-10 h-10 rounded-full border border-gray-200 text-black hover:bg-black hover:text-white transition-all no-underline shadow-sm" aria-label="Twitter">
+                            <a href="#" className="flex items-center justify-center w-10 h-10 rounded-full border border-gray-200 text-black hover:bg-slate-500 hover:text-white transition-all no-underline shadow-sm" aria-label="Twitter">
                                 <FaTwitter size={18} />
                             </a>
                             <a href="#" className="flex items-center justify-center w-10 h-10 rounded-full bg-black text-white border border-black no-underline shadow-md" aria-label="Facebook">
                                 <FaFacebookF size={18} />
                             </a>
-                            <a href="#" className="flex items-center justify-center w-10 h-10 rounded-full border border-gray-200 text-black hover:bg-black hover:text-white transition-all no-underline shadow-sm" aria-label="Instagram">
+                            <a href="#" className="flex items-center justify-center w-10 h-10 rounded-full border border-gray-200 text-black hover:bg-slate-500 hover:text-white transition-all no-underline shadow-sm" aria-label="Instagram">
                                 <FaInstagram size={18} />
                             </a>
-                            <a href="#" className="flex items-center justify-center w-10 h-10 rounded-full border border-gray-200 text-black hover:bg-black hover:text-white transition-all no-underline shadow-sm" aria-label="GitHub">
+                            <a href="#" className="flex items-center justify-center w-10 h-10 rounded-full border border-gray-200 text-black hover:bg-slate-500 hover:text-white transition-all no-underline shadow-sm" aria-label="GitHub">
                                 <FaGithub size={18} />
                             </a>
                         </div>

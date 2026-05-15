@@ -7,6 +7,7 @@ import {
 import { handleSuccess, handleError } from '../utils/toast';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { useCart } from '../context/CartContext';
 
 const defaultSizes = ['S', 'M', 'L', 'XL', 'XXL'].map((size) => ({ size, stock: 0 }));
 const shippingItems = [
@@ -19,6 +20,7 @@ const shippingItems = [
 function ProductPage() {
     const navigate = useNavigate();
     const { id } = useParams();
+    const { addToCart } = useCart();
     const [product, setProduct] = useState(null);
     const [isLoading, setIsLoading] = useState(Boolean(id));
     const [errorMessage, setErrorMessage] = useState('');
@@ -165,6 +167,8 @@ function ProductPage() {
     };
 
     const handleAddToCart = () => {
+        if (!product) return;
+        addToCart(product, selectedSize);
         handleSuccess(`Added size ${selectedSize} to your cart!`);
     };
 
@@ -194,7 +198,30 @@ function ProductPage() {
 
         const firstAvailableSize = productSizes.find((item) => Number(item.stock) > 0) || productSizes[0];
         setSelectedSize(firstAvailableSize?.size || '');
+
+        // Check if current product is in wishlist
+        const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+        setIsWishlisted(wishlist.some(item => item._id === product._id));
     }, [product, productSizes]);
+
+    const toggleWishlist = () => {
+        if (!product) return;
+        
+        const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+        const isCurrentlyWishlisted = wishlist.some(item => item._id === product._id);
+
+        let updatedWishlist;
+        if (isCurrentlyWishlisted) {
+            updatedWishlist = wishlist.filter(item => item._id !== product._id);
+            handleSuccess("Removed from wishlist");
+        } else {
+            updatedWishlist = [...wishlist, product];
+            handleSuccess("Added to wishlist!");
+        }
+
+        localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
+        setIsWishlisted(!isCurrentlyWishlisted);
+    };
 
     if (isLoading) {
         return (
@@ -364,7 +391,7 @@ function ProductPage() {
                                 )}
                             </button>
                             <button
-                                onClick={() => setIsWishlisted(!isWishlisted)}
+                                onClick={toggleWishlist}
                                 className={`flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-sm transition ${isWishlisted ? 'text-red-500' : 'text-gray-400 hover:text-gray-600'}`}
                             >
                                 <HiHeart size={20} className={isWishlisted ? 'fill-current' : ''} />
@@ -500,7 +527,7 @@ function ProductPage() {
                                         <button
                                             type="submit"
                                             disabled={isSubmittingReview}
-                                            className="w-full rounded-full bg-[#1f1f1f] py-5 text-sm font-bold text-white transition-all hover:bg-black hover:shadow-xl active:scale-[0.98] disabled:opacity-50 shadow-lg shadow-black/10"
+                                            className="w-full rounded-full bg-[#1f1f1f] py-4 text-sm font-bold text-white transition-all hover:bg-black hover:shadow-xl active:scale-[0.98] disabled:opacity-50 shadow-lg shadow-black/10"
                                         >
                                             {isSubmittingReview ? 'Sending Review...' : 'Submit Review'}
                                         </button>

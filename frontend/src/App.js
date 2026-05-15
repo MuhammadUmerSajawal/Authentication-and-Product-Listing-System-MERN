@@ -7,6 +7,10 @@ import ProductPage from './pages/ProductPage';
 import RefreshHandler from './components/RefreshHandler';
 import { useState } from 'react';
 import ProductDetails from './pages/ProductDetails';
+import CartPage from './pages/CartPage';
+import WishlistPage from './pages/WishlistPage';
+
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(Boolean(localStorage.getItem('token')));  
@@ -24,10 +28,12 @@ function App() {
         {/* <Route path="/productpage" element={<PrivateRoute element={<ProductPage/>} />} /> */}
         <Route path="/productpage/:id" element={<PrivateRoute element={<ProductPage/>} />} />
         <Route path="/products/:productName" element={<PrivateRoute element={<ProductDetails/>} />} />
+        <Route path="/cart" element={<PrivateRoute element={<CartPage/>} />} />
+        <Route path="/wishlist" element={<PrivateRoute element={<WishlistPage/>} />} />
         <Route path="/login" element={<Login/>} />
         <Route path="/signup" element={<Signup/>} />
       </Routes>
-      {/* <h1>MERN Authentication App</h1> */}
+      <ToastContainer />
     </div>
   );
 }

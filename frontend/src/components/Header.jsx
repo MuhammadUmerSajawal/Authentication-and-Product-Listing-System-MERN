@@ -1,9 +1,11 @@
 import React from 'react';
-import { HiBars3, HiMagnifyingGlass, HiShoppingBag, HiChevronDown, HiArrowRightOnRectangle } from 'react-icons/hi2';
+import { HiBars3, HiMagnifyingGlass, HiShoppingBag, HiChevronDown, HiArrowRightOnRectangle, HiHeart } from 'react-icons/hi2';
 import { useNavigate } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
 
-const Header = ({ searchTerm, onSearchChange, onSearchSubmit, loggedInUser, loggedInEmail, handleLogout }) => {
+const Header = ({ searchTerm, onSearchChange, onSearchSubmit, loggedInUser, loggedInEmail, handleLogout, hideSecondaryNav = false }) => {
     const navigate = useNavigate();
+    const { cartCount } = useCart();
     const [isProfileOpen, setIsProfileOpen] = React.useState(false);
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
     const [openDropdown, setOpenDropdown] = React.useState(null); // 'categories' | 'newProduct' | null
@@ -113,8 +115,16 @@ const Header = ({ searchTerm, onSearchChange, onSearchSubmit, loggedInUser, logg
                         </nav>
 
                         <div className="flex items-center gap-3">
-                            <button className="flex h-12 w-12 items-center justify-center rounded-full border border-gray-100 bg-white shadow-sm hover:shadow-md transition">
+                             <button 
+                                onClick={() => navigate('/cart')}
+                                className="relative flex h-12 w-12 items-center justify-center rounded-full border border-gray-100 bg-white shadow-sm hover:shadow-md transition"
+                            >
                                 <HiShoppingBag size={20} className="text-gray-700" />
+                                {cartCount > 0 && (
+                                    <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white shadow-sm animate-in zoom-in duration-300">
+                                        {cartCount}
+                                    </span>
+                                )}
                             </button>
 
                             <div className="relative">
@@ -135,9 +145,22 @@ const Header = ({ searchTerm, onSearchChange, onSearchSubmit, loggedInUser, logg
                                         </div>
                                         <button
                                             type="button"
+                                            onClick={() => {
+                                                navigate('/wishlist');
+                                                setIsProfileOpen(false);
+                                            }}
+                                            className="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-left text-sm font-semibold text-gray-600 transition hover:bg-gray-50 hover:text-black mb-1"
+                                        >
+                                            <HiHeart size={18} />
+                                            Wishlist
+                                        </button>
+                                        <button
+                                            type="button"
                                             className="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-left text-sm font-semibold text-gray-600 transition hover:bg-red-50 hover:text-red-500"
                                             onClick={() => {
-                                                handleLogout && handleLogout();
+                                                if (window.confirm("Are you sure you want to logout?")) {
+                                                    handleLogout && handleLogout();
+                                                }
                                                 setIsProfileOpen(false);
                                             }}
                                         >
@@ -152,66 +175,115 @@ const Header = ({ searchTerm, onSearchChange, onSearchSubmit, loggedInUser, logg
                 </div>
 
                 {/* Bottom Row */}
-                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 py-2 relative">
-                    <div className="flex flex-wrap items-center gap-3">
-                        <div className="relative group">
-                            <div
-                                onClick={() => toggleDropdown('categories')}
-                                className={`flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-bold cursor-pointer transition-all border ${openDropdown === 'categories' ? 'bg-[#1f1f1f] text-white border-[#1f1f1f]' : 'bg-gray-50/80 text-gray-500 border-transparent hover:bg-gray-100'}`}
-                            >
-                                <span>Categories</span>
-                                <HiChevronDown size={14} className={`transition-transform duration-300 ${openDropdown === 'categories' ? 'rotate-180' : ''}`} />
+                {!hideSecondaryNav && (
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 py-2 relative">
+                        <div className="flex flex-wrap items-center gap-3">
+                            <div className="relative group">
+                                <div
+                                    onClick={() => toggleDropdown('categories')}
+                                    className={`flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-bold cursor-pointer transition-all border ${openDropdown === 'categories' ? 'bg-[#1f1f1f] text-white border-[#1f1f1f]' : 'bg-gray-50/80 text-gray-500 border-transparent hover:bg-gray-100'}`}
+                                >
+                                    <span>Categories</span>
+                                    <HiChevronDown size={14} className={`transition-transform duration-300 ${openDropdown === 'categories' ? 'rotate-180' : ''}`} />
+                                </div>
+
+                                {openDropdown === 'categories' && (
+                                    <div className="absolute left-0 top-full z-[100] mt-3 w-64 rounded-3xl border border-gray-100 bg-white p-3 shadow-2xl animate-in fade-in slide-in-from-top-4 duration-300">
+                                        <div className="grid gap-1">
+                                            {categories.map((cat) => (
+                                                <button
+                                                    key={cat}
+                                                    onClick={() => {
+                                                        onSearchChange && onSearchChange(cat);
+                                                        setOpenDropdown(null);
+                                                    }}
+                                                    className="flex items-center justify-between rounded-2xl px-5 py-3 text-sm font-bold text-gray-600 transition hover:bg-gray-50 hover:text-[#1f1f1f]"
+                                                >
+                                                    {cat}
+                                                    <div className="h-1.5 w-1.5 rounded-full bg-gray-200" />
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
-                            {openDropdown === 'categories' && (
-                                <div className="absolute left-0 top-full z-[100] mt-3 w-64 rounded-3xl border border-gray-100 bg-white p-3 shadow-2xl animate-in fade-in slide-in-from-top-4 duration-300">
-                                    <div className="grid gap-1">
-                                        {categories.map((cat) => (
-                                            <button
-                                                key={cat}
-                                                onClick={() => {
-                                                    onSearchChange && onSearchChange(cat);
-                                                    setOpenDropdown(null);
-                                                }}
-                                                className="flex items-center justify-between rounded-2xl px-5 py-3 text-sm font-bold text-gray-600 transition hover:bg-gray-50 hover:text-[#1f1f1f]"
-                                            >
-                                                {cat}
-                                                <div className="h-1.5 w-1.5 rounded-full bg-gray-200" />
-                                            </button>
-                                        ))}
-                                    </div>
+                            <div className="relative group">
+                                <div
+                                    onClick={() => toggleDropdown('newProduct')}
+                                    className={`flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-bold cursor-pointer transition-all border ${openDropdown === 'newProduct' ? 'bg-[#1f1f1f] text-white border-[#1f1f1f]' : 'bg-gray-50/80 text-gray-500 border-transparent hover:bg-gray-100'}`}
+                                >
+                                    <span>New Product</span>
+                                    <HiChevronDown size={14} className={`transition-transform duration-300 ${openDropdown === 'newProduct' ? 'rotate-180' : ''}`} />
                                 </div>
-                            )}
+
+                                {openDropdown === 'newProduct' && (
+                                    <div className="absolute left-0 top-full z-[100] mt-3 w-[340px] rounded-3xl border border-gray-100 bg-white p-3 shadow-2xl animate-in fade-in slide-in-from-top-4 duration-300">
+                                        <p className="mb-3 px-4 pt-2 text-[10px] font-bold uppercase tracking-widest text-gray-400">Recently Added</p>
+                                        <div className="space-y-1">
+                                            {newProducts.map((product) => (
+                                                <div
+                                                    key={product._id}
+                                                    onClick={() => {
+                                                        navigate(`/productpage/${product._id}`);
+                                                        setOpenDropdown(null);
+                                                    }}
+                                                    className="flex items-center gap-3 rounded-2xl p-2.5 cursor-pointer hover:bg-gray-50 transition-all group/item"
+                                                >
+                                                    <div className="h-12 w-12 overflow-hidden rounded-xl bg-gray-100">
+                                                        <img src={getImageUrl(product)} alt={product.name} className="h-full w-full object-cover group-hover/item:scale-110 transition-transform" />
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="text-sm font-bold text-gray-800 truncate">{product.name}</p>
+                                                        <p className="text-[11px] font-bold text-gray-400">${product.price}</p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
-                        <div className="relative group">
-                            <div
-                                onClick={() => toggleDropdown('newProduct')}
-                                className={`flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-bold cursor-pointer transition-all border ${openDropdown === 'newProduct' ? 'bg-[#1f1f1f] text-white border-[#1f1f1f]' : 'bg-gray-50/80 text-gray-500 border-transparent hover:bg-gray-100'}`}
-                            >
-                                <span>New Product</span>
-                                <HiChevronDown size={14} className={`transition-transform duration-300 ${openDropdown === 'newProduct' ? 'rotate-180' : ''}`} />
-                            </div>
+                        <div className="relative flex-1 max-w-2xl lg:mx-8">
+                            <form onSubmit={handleSearchSubmit}>
+                                <input
+                                    type="text"
+                                    placeholder="Search"
+                                    value={searchTerm || ''}
+                                    onChange={(e) => onSearchChange && onSearchChange(e.target.value)}
+                                    onFocus={() => searchTerm && setShowResults(true)}
+                                    className="w-full rounded-full bg-gray-50/80 py-3 pl-6 pr-14 text-sm font-medium outline-none focus:bg-white focus:ring-4 focus:ring-gray-100/50 transition-all border border-transparent focus:border-gray-200"
+                                />
+                                <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-[#1f1f1f] text-white shadow-lg shadow-black/10 hover:scale-105 active:scale-95 transition-all">
+                                    <HiMagnifyingGlass size={18} />
+                                </button>
+                            </form>
 
-                            {openDropdown === 'newProduct' && (
-                                <div className="absolute left-0 top-full z-[100] mt-3 w-[340px] rounded-3xl border border-gray-100 bg-white p-3 shadow-2xl animate-in fade-in slide-in-from-top-4 duration-300">
-                                    <p className="mb-3 px-4 pt-2 text-[10px] font-bold uppercase tracking-widest text-gray-400">Recently Added</p>
+                            {/* Search Results Dropdown */}
+                            {showResults && (
+                                <div className="absolute left-0 right-0 top-full z-[120] mt-4 overflow-hidden rounded-[24px] border border-gray-100 bg-white p-3 shadow-2xl animate-in fade-in slide-in-from-top-4 duration-300">
+                                    <p className="mb-3 px-4 pt-2 text-[10px] font-bold uppercase tracking-widest text-gray-400">Search Results</p>
                                     <div className="space-y-1">
-                                        {newProducts.map((product) => (
+                                        {filteredResults.map((product) => (
                                             <div
                                                 key={product._id}
                                                 onClick={() => {
                                                     navigate(`/productpage/${product._id}`);
-                                                    setOpenDropdown(null);
+                                                    setShowResults(false);
+                                                    onSearchChange && onSearchChange('');
                                                 }}
-                                                className="flex items-center gap-3 rounded-2xl p-2.5 cursor-pointer hover:bg-gray-50 transition-all group/item"
+                                                className="flex items-center gap-4 rounded-2xl p-3 cursor-pointer hover:bg-gray-50 transition-colors group"
                                             >
-                                                <div className="h-12 w-12 overflow-hidden rounded-xl bg-gray-100">
-                                                    <img src={getImageUrl(product)} alt={product.name} className="h-full w-full object-cover group-hover/item:scale-110 transition-transform" />
+                                                <div className="h-14 w-14 overflow-hidden rounded-xl bg-gray-100 group-hover:scale-105 transition-transform">
+                                                    <img src={getImageUrl(product)} alt={product.name} className="h-full w-full object-cover" />
                                                 </div>
                                                 <div className="flex-1 min-w-0">
                                                     <p className="text-sm font-bold text-gray-800 truncate">{product.name}</p>
-                                                    <p className="text-[11px] font-bold text-gray-400">${product.price}</p>
+                                                    <p className="text-xs font-medium text-gray-400">{product.category}</p>
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className="text-sm font-bold text-[#1f1f1f]">${product.price}</p>
                                                 </div>
                                             </div>
                                         ))}
@@ -219,70 +291,23 @@ const Header = ({ searchTerm, onSearchChange, onSearchSubmit, loggedInUser, logg
                                 </div>
                             )}
                         </div>
-                    </div>
 
-                    <div className="relative flex-1 max-w-2xl lg:mx-8">
-                        <form onSubmit={handleSearchSubmit}>
-                            <input
-                                type="text"
-                                placeholder="Search"
-                                value={searchTerm || ''}
-                                onChange={(e) => onSearchChange && onSearchChange(e.target.value)}
-                                onFocus={() => searchTerm && setShowResults(true)}
-                                className="w-full rounded-full bg-gray-50/80 py-3 pl-6 pr-14 text-sm font-medium outline-none focus:bg-white focus:ring-4 focus:ring-gray-100/50 transition-all border border-transparent focus:border-gray-200"
-                            />
-                            <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-[#1f1f1f] text-white shadow-lg shadow-black/10 hover:scale-105 active:scale-95 transition-all">
-                                <HiMagnifyingGlass size={18} />
-                            </button>
-                        </form>
-
-                        {/* Search Results Dropdown */}
-                        {showResults && (
-                            <div className="absolute left-0 right-0 top-full z-[120] mt-4 overflow-hidden rounded-[24px] border border-gray-100 bg-white p-3 shadow-2xl animate-in fade-in slide-in-from-top-4 duration-300">
-                                <p className="mb-3 px-4 pt-2 text-[10px] font-bold uppercase tracking-widest text-gray-400">Search Results</p>
-                                <div className="space-y-1">
-                                    {filteredResults.map((product) => (
-                                        <div
-                                            key={product._id}
-                                            onClick={() => {
-                                                navigate(`/productpage/${product._id}`);
-                                                setShowResults(false);
-                                                onSearchChange && onSearchChange('');
-                                            }}
-                                            className="flex items-center gap-4 rounded-2xl p-3 cursor-pointer hover:bg-gray-50 transition-colors group"
-                                        >
-                                            <div className="h-14 w-14 overflow-hidden rounded-xl bg-gray-100 group-hover:scale-105 transition-transform">
-                                                <img src={getImageUrl(product)} alt={product.name} className="h-full w-full object-cover" />
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <p className="text-sm font-bold text-gray-800 truncate">{product.name}</p>
-                                                <p className="text-xs font-medium text-gray-400">{product.category}</p>
-                                            </div>
-                                            <div className="text-right">
-                                                <p className="text-sm font-bold text-[#1f1f1f]">${product.price}</p>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
+                        <div className="flex flex-wrap items-center gap-2">
+                            {['Men', 'Women', 'Children', 'Brands'].map((item) => (
+                                <button
+                                    key={item}
+                                    onClick={() => onSearchChange && onSearchChange(item)}
+                                    className={`rounded-full border px-7 py-2.5 text-sm font-bold transition-all shadow-sm hover:shadow-md active:scale-95 ${searchTerm === item
+                                            ? 'bg-[#1f1f1f] text-white border-[#1f1f1f]'
+                                            : 'bg-white text-[#1f1f1f] border-gray-100 hover:bg-gray-50'
+                                        }`}
+                                >
+                                    {item}
+                                </button>
+                            ))}
+                        </div>
                     </div>
-
-                    <div className="flex flex-wrap items-center gap-2">
-                        {['Men', 'Women', 'Children', 'Brands'].map((item) => (
-                            <button
-                                key={item}
-                                onClick={() => onSearchChange && onSearchChange(item)}
-                                className={`rounded-full border px-7 py-2.5 text-sm font-bold transition-all shadow-sm hover:shadow-md active:scale-95 ${searchTerm === item
-                                        ? 'bg-[#1f1f1f] text-white border-[#1f1f1f]'
-                                        : 'bg-white text-[#1f1f1f] border-gray-100 hover:bg-gray-50'
-                                    }`}
-                            >
-                                {item}
-                            </button>
-                        ))}
-                    </div>
-                </div>
+                )}
 
                 {/* Mobile Menu */}
                 {isMenuOpen && (
