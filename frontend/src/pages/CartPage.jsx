@@ -71,7 +71,7 @@ const CartPage = () => {
     const subtotal = cartTotal;
     const baseDiscount = subtotal > 0 ? Math.round(subtotal * 0.2) : 0; // 20% base
     const additionalDiscount = subtotal > 0 ? Math.round(subtotal * promoDiscount) : 0; // Promo discount
-    const deliveryFee = subtotal > 0 ? 15 : 0;
+    const deliveryFee = subtotal > 0 ? 1 : 0;
     const total = subtotal - baseDiscount - additionalDiscount + deliveryFee;
 
     return (
@@ -205,7 +205,20 @@ const CartPage = () => {
                                     </button>
                                 </div>
 
-                                <button className="w-full bg-black text-white py-4 rounded-full font-bold flex items-center justify-center gap-2 hover:bg-gray-800 transition shadow-lg shadow-black/10">
+                                <button 
+                                    onClick={() => {
+                                        localStorage.setItem('checkout_summary', JSON.stringify({
+                                            subtotal,
+                                            baseDiscount,
+                                            additionalDiscount,
+                                            deliveryFee,
+                                            total,
+                                            appliedCode
+                                        }));
+                                        navigate('/checkout');
+                                    }}
+                                    className="w-full bg-black text-white py-4 rounded-full font-bold flex items-center justify-center gap-2 hover:bg-gray-800 transition shadow-lg shadow-black/10"
+                                >
                                     Go to Checkout
                                     <HiArrowRight size={20} />
                                 </button>

@@ -249,12 +249,54 @@ const getRelatedProducts = async (req, res) => {
     }
 }
 
+const checkoutProducts = async (req, res) => {
+    try {
+        const { items } = req.body;
+        
+        for (const item of items) {
+            const product = await ProductModel.findById(item.id);
+            if (product) {
+                // Find the size and reduce the stock by the purchased quantity
+                const sizeObj = product.sizes.find(s => s.size === item.size);
+                if (sizeObj) {
+                    sizeObj.stock -= item.quantity;
+                    if (sizeObj.stock < 0) {
+                        sizeObj.stock = 0;
+                    }
+                }
+
+                // Check if all sizes have 0 stock now
+                const totalStock = product.sizes.reduce((sum, s) => sum + s.stock, 0);
+
+                if (totalStock <= 0) {
+                    // If no stock is left across all sizes, remove the product from database
+                    await ProductModel.findByIdAndDelete(item.id);
+                } else {
+                    // Otherwise, save the updated stock
+                    await product.save();
+                }
+            }
+        }
+
+        res.status(200).json({
+            message: "Checkout successful",
+            success: true
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Internal Server Error",
+            success: false
+        });
+    }
+}
+
 module.exports = {
     createProduct,
     getProducts,
     getProductById,
     updateProduct,
     deleteProduct,
-    getRelatedProducts
+    getRelatedProducts,
+    checkoutProducts
 }
 

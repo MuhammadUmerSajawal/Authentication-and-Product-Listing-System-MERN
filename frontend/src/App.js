@@ -9,6 +9,7 @@ import { useState } from 'react';
 import ProductDetails from './pages/ProductDetails';
 import CartPage from './pages/CartPage';
 import WishlistPage from './pages/WishlistPage';
+import CheckoutPage from './pages/CheckoutPage';
 
 import { ToastContainer } from 'react-toastify';
 
@@ -30,6 +31,7 @@ function App() {
         <Route path="/products/:productName" element={<PrivateRoute element={<ProductDetails/>} />} />
         <Route path="/cart" element={<PrivateRoute element={<CartPage/>} />} />
         <Route path="/wishlist" element={<PrivateRoute element={<WishlistPage/>} />} />
+        <Route path="/checkout" element={<PrivateRoute element={<CheckoutPage/>} />} />
         <Route path="/login" element={<Login/>} />
         <Route path="/signup" element={<Signup/>} />
       </Routes>

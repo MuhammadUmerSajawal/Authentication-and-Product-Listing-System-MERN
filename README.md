@@ -10,6 +10,7 @@ A premium, full-stack MERN (MongoDB, Express, React, Node.js) application design
 - **Promo Code System**: Functional discount engine (e.g., use code **`SAVE10`** for 10% off).
 - **Interactive Wishlist**: Save favorite products to a personalized wishlist.
 - **Dynamic Order Summary**: Automated calculation of subtotals, tax, delivery fees, and discounts with high-precision rounding.
+- **Simulated Checkout Flow**: Full checkout experience with shipping detail forms, card processing validation, and dynamic calculation persistence via LocalStorage.
 
 ### 🔐 Authentication & Security
 - **JWT-Based Auth**: Secure session management with JSON Web Tokens.
@@ -20,8 +21,9 @@ A premium, full-stack MERN (MongoDB, Express, React, Node.js) application design
 ### 🛠 Product & Inventory Management
 - **Full CRUD Support**: Add, Edit, View, and Delete products with ease.
 - **Granular Permissions**: Users can only modify or delete products they personally created.
-- **Multi-Size Management**: track stock levels individually for different sizes (S, M, L, XL, XXL).
+- **Multi-Size Management**: Track stock levels individually for different sizes (S, M, L, XL, XXL).
 - **Image Uploads**: Support for multiple product images with automated server-side storage.
+- **Inventory Autoclean**: Automatically decrements stock on purchase. If all sizes are sold out (stock = 0), the product is auto-removed from the database.
 
 ### 🎨 Premium UI/UX
 - **Responsive Design**: Fully optimized for Desktop, Tablet, and Mobile.
@@ -63,7 +65,7 @@ mern-auth-app/
     ├── src/
     │   ├── components/    # Reusable UI (Header, Footer, RefreshHandler)
     │   ├── context/       # Global State (CartContext)
-    │   ├── pages/         # View components (Dashboard, Cart, Wishlist, ProductPage)
+    │   ├── pages/         # View components (Dashboard, Cart, Wishlist, ProductPage, CheckoutPage)
     │   └── utils/         # Helper functions and API config
 ```
 
@@ -119,6 +121,7 @@ npm start
 | POST | `/products` | Add new product (Auth Required) |
 | PUT | `/products/:id` | Update product details |
 | DELETE | `/products/:id` | Remove product (Creator Only) |
+| POST | `/products/checkout` | Purchase items (reduces stock / deletes if sold out) |
 
 ---
 
