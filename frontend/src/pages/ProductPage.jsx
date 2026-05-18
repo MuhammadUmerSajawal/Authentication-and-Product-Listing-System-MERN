@@ -8,6 +8,7 @@ import { handleSuccess, handleError } from '../utils/toast';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useCart } from '../context/CartContext';
+import { slugify } from '../utils/slugify';
 
 const defaultSizes = ['S', 'M', 'L', 'XL', 'XXL'].map((size) => ({ size, stock: 0 }));
 const shippingItems = [
@@ -19,10 +20,10 @@ const shippingItems = [
 
 function ProductPage() {
     const navigate = useNavigate();
-    const { id } = useParams();
+    const { productName } = useParams();
     const { addToCart } = useCart();
     const [product, setProduct] = useState(null);
-    const [isLoading, setIsLoading] = useState(Boolean(id));
+    const [isLoading, setIsLoading] = useState(Boolean(productName));
     const [errorMessage, setErrorMessage] = useState('');
     const [reviews, setReviews] = useState([]);
     const [userRating, setUserRating] = useState(5);
@@ -38,11 +39,11 @@ function ProductPage() {
     useEffect(() => {
         setLoggedInUser(localStorage.getItem('loggedInUser'));
         setLoggedInEmail(localStorage.getItem('loggedInEmail'));
-        if (!id) return;
+        if (!productName) return;
 
         const fetchProduct = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/products/${id}`);
+                const response = await fetch(`http://localhost:8080/products/${productName}`);
                 const result = await response.json();
 
                 if (result.success) {
@@ -58,7 +59,7 @@ function ProductPage() {
         };
 
         fetchProduct();
-    }, [id]);
+    }, [productName]);
 
     const fetchReviews = async () => {
         if (!product?._id) return;
@@ -131,7 +132,7 @@ function ProductPage() {
                 setShowReviewForm(false);
                 fetchReviews();
                 // Optionally re-fetch product to get updated averageRating
-                const prodResponse = await fetch(`http://localhost:8080/products/${id}`);
+                const prodResponse = await fetch(`http://localhost:8080/products/${productName}`);
                 const prodResult = await prodResponse.json();
                 if (prodResult.success) setProduct(prodResult.data);
             } else {
@@ -616,7 +617,7 @@ function ProductPage() {
                                     key={item._id}
                                     type="button"
                                     onClick={() => {
-                                        navigate(`/productpage/${item._id}`);
+                                        navigate(`/products/${slugify(item.name)}`);
                                         window.scrollTo(0, 0);
                                     }}
                                     className="group flex flex-col items-start bg-transparent p-0 text-left"

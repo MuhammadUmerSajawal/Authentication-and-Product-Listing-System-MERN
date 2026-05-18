@@ -6,7 +6,6 @@ import Signup from './pages/Signup';
 import ProductPage from './pages/ProductPage';
 import RefreshHandler from './components/RefreshHandler';
 import { useState } from 'react';
-import ProductDetails from './pages/ProductDetails';
 import CartPage from './pages/CartPage';
 import WishlistPage from './pages/WishlistPage';
 import CheckoutPage from './pages/CheckoutPage';
@@ -27,8 +26,7 @@ function App() {
         <Route path="/" element={<Navigate to="/login"/>} />
         <Route path="/dashboard" element={<PrivateRoute element= {<Dashboard/>} />} />    {/* //when user is authenticated then it will render home page else it will redirect to login page */}
         {/* <Route path="/productpage" element={<PrivateRoute element={<ProductPage/>} />} /> */}
-        <Route path="/productpage/:id" element={<PrivateRoute element={<ProductPage/>} />} />
-        <Route path="/products/:productName" element={<PrivateRoute element={<ProductDetails/>} />} />
+        <Route path="/products/:productName" element={<PrivateRoute element={<ProductPage/>} />} />
         <Route path="/cart" element={<PrivateRoute element={<CartPage/>} />} />
         <Route path="/wishlist" element={<PrivateRoute element={<WishlistPage/>} />} />
         <Route path="/checkout" element={<PrivateRoute element={<CheckoutPage/>} />} />

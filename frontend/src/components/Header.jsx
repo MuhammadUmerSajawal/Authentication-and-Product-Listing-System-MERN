@@ -2,6 +2,7 @@ import React from 'react';
 import { HiBars3, HiMagnifyingGlass, HiShoppingBag, HiChevronDown, HiArrowRightOnRectangle, HiHeart } from 'react-icons/hi2';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { slugify } from '../utils/slugify';
 
 const Header = ({ searchTerm, onSearchChange, onSearchSubmit, loggedInUser, loggedInEmail, handleLogout, hideSecondaryNav = false }) => {
     const navigate = useNavigate();
@@ -67,7 +68,7 @@ const Header = ({ searchTerm, onSearchChange, onSearchSubmit, loggedInUser, logg
         if (onSearchSubmit) {
             onSearchSubmit(searchTerm);
         } else if (filteredResults.length > 0) {
-            navigate(`/productpage/${filteredResults[0]._id}`);
+            navigate(`/products/${slugify(filteredResults[0].name)}`);
             setShowResults(false);
         }
     };
@@ -225,7 +226,7 @@ const Header = ({ searchTerm, onSearchChange, onSearchSubmit, loggedInUser, logg
                                                 <div
                                                     key={product._id}
                                                     onClick={() => {
-                                                        navigate(`/productpage/${product._id}`);
+                                                        navigate(`/products/${slugify(product.name)}`);
                                                         setOpenDropdown(null);
                                                     }}
                                                     className="flex items-center gap-3 rounded-2xl p-2.5 cursor-pointer hover:bg-gray-50 transition-all group/item"
@@ -269,7 +270,7 @@ const Header = ({ searchTerm, onSearchChange, onSearchSubmit, loggedInUser, logg
                                             <div
                                                 key={product._id}
                                                 onClick={() => {
-                                                    navigate(`/productpage/${product._id}`);
+                                                    navigate(`/products/${slugify(product.name)}`);
                                                     setShowResults(false);
                                                     onSearchChange && onSearchChange('');
                                                 }}

@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { handleSuccess, handleError } from '../utils/toast';
 import { useCart } from '../context/CartContext';
+import { slugify } from '../utils/slugify';
 
 const WishlistPage = () => {
     const navigate = useNavigate();
@@ -122,7 +123,7 @@ const WishlistPage = () => {
                                 {/* Product Image */}
                                 <div 
                                     className="relative aspect-[4/5] w-full overflow-hidden rounded-[18px] bg-gray-50 cursor-pointer"
-                                    onClick={() => navigate(`/productpage/${item._id}`)}
+                                    onClick={() => navigate(`/products/${slugify(item.name)}`)}
                                 >
                                     <img 
                                         src={getImageUrl(item.images?.[0])} 
@@ -149,7 +150,7 @@ const WishlistPage = () => {
                                     </div>
                                     <h3 
                                         className="text-base font-bold text-gray-900 line-clamp-1 cursor-pointer hover:text-black"
-                                        onClick={() => navigate(`/productpage/${item._id}`)}
+                                        onClick={() => navigate(`/products/${slugify(item.name)}`)}
                                     >
                                         {item.name}
                                     </h3>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from "react-router-dom";
 import { Modal, Form } from 'react-bootstrap';
 import { handleSuccess, handleError } from '../utils/toast';
+import { slugify } from '../utils/slugify';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -281,7 +282,7 @@ function Dashboard() {
                                                     <button
                                                         type="button"
                                                         className="m-0 flex items-center gap-3 bg-transparent p-0 text-left"
-                                                        onClick={() => navigate(`/productpage/${product._id}`)}
+                                                        onClick={() => navigate(`/products/${slugify(product.name)}`)}
                                                     >
                                                         <span className={`flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full text-sm font-bold ${getProductImageUrl(product) ? 'bg-white' : getProductTone(index)}`}>
                                                             {getProductImageUrl(product) ? (
@@ -313,7 +314,7 @@ function Dashboard() {
                                                         <button
                                                             type="button"
                                                             className="flex h-9 w-9 items-center justify-center rounded-md text-[#9aa2af] transition hover:bg-[#edf4ff] hover:text-[#3267ff]"
-                                                            onClick={() => navigate(`/productpage/${product._id}`)}
+                                                            onClick={() => navigate(`/products/${slugify(product.name)}`)}
                                                             title="View product"
                                                         >
                                                             <HiEye size={18} />
@@ -359,7 +360,7 @@ function Dashboard() {
                                     <div key={product._id || index} className="group overflow-hidden rounded-[8px] border border-[#edf0f4] bg-white transition hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(25,31,44,0.08)]">
                                         <button
                                             type="button"
-                                            onClick={() => navigate(`/productpage/${product._id}`)}
+                                            onClick={() => navigate(`/products/${slugify(product.name)}`)}
                                             className="relative block w-full bg-[#f6f7f9] p-0"
                                         >
                                             <div className="flex aspect-[4/5] w-full items-center justify-center overflow-hidden">
@@ -401,7 +402,7 @@ function Dashboard() {
                                                 <button
                                                     type="button"
                                                     className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-[#3267ff] text-white shadow-[0_10px_20px_rgba(50,103,255,0.22)] transition hover:bg-[#2556dc]"
-                                                    onClick={() => navigate(`/productpage/${product._id}`)}
+                                                    onClick={() => navigate(`/products/${slugify(product.name)}`)}
                                                     title="View product"
                                                 >
                                                     <HiShoppingBag size={18} />
