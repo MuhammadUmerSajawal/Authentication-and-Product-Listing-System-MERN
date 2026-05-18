@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
-    HiArrowLeft, HiChevronUp, HiHeart, HiShoppingBag, HiStar, HiTruck, HiBell, HiPencilSquare, HiChevronRight
+    HiArrowLeft, HiChevronUp, HiHeart, HiShoppingBag, HiStar, HiTruck, HiBell, HiPencilSquare, HiChevronRight, HiChevronLeft
 }
     from 'react-icons/hi2';
 import { handleSuccess, handleError } from '../utils/toast';
@@ -23,6 +23,7 @@ function ProductPage() {
     const { productName } = useParams();
     const { addToCart } = useCart();
     const [product, setProduct] = useState(null);
+    const [activeImageIndex, setActiveImageIndex] = useState(0);
     const [isLoading, setIsLoading] = useState(Boolean(productName));
     const [errorMessage, setErrorMessage] = useState('');
     const [reviews, setReviews] = useState([]);
@@ -48,6 +49,7 @@ function ProductPage() {
 
                 if (result.success) {
                     setProduct(result.data);
+                    setActiveImageIndex(0);
                 } else {
                     setErrorMessage(result.message || 'Unable to load product');
                 }
@@ -181,11 +183,7 @@ function ProductPage() {
     };
 
     const productImages = product?.images?.length ? product.images : ['/main.png'];
-    const mainImage = getImageUrl(productImages[0]);
-    const thumbnailImages = productImages
-        .slice(1)
-        .filter((image, index, images) => image !== productImages[0] && images.indexOf(image) === index)
-        .slice(0, 3);
+    const mainImage = getImageUrl(productImages[activeImageIndex]);
 
     const [selectedSize, setSelectedSize] = useState('S');
     const [isWishlisted, setIsWishlisted] = useState(false);
@@ -274,25 +272,61 @@ function ProductPage() {
                 </nav>
 
                 <section className="grid grid-cols-1 gap-7 lg:grid-cols-[minmax(0,1.18fr)_minmax(420px,0.82fr)] lg:items-start">
-                    <div className="relative overflow-hidden rounded-[18px] bg-white shadow-sm">
+                    <div className="relative overflow-hidden rounded-[18px] bg-white shadow-sm group/carousel">
                         <img
                             src={mainImage}
                             alt={product?.name || 'Product image'}
-                            className="h-[560px] w-full object-cover object-top sm:h-[650px] xl:h-[720px]"
+                            className="h-[560px] w-full object-cover object-top sm:h-[650px] xl:h-[720px] transition-all duration-500 ease-in-out"
                         />
 
-                        <div className="absolute left-4 right-4 top-4 h-1 rounded-full bg-white/25">
-                            <div className="mx-auto h-1 w-28 rounded-full bg-white" />
-                        </div>
+                        {/* Top stories-style indicator */}
+                        {productImages.length > 1 && (
+                            <div className="absolute left-4 right-4 top-4 flex gap-2 z-10">
+                                {productImages.map((_, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => setActiveImageIndex(index)}
+                                        className="h-1 flex-1 rounded-full overflow-hidden bg-white/25 focus:outline-none"
+                                        title={`Go to image ${index + 1}`}
+                                    >
+                                        <div 
+                                            className={`h-full bg-white transition-all duration-300 ${activeImageIndex === index ? 'w-full' : 'w-0'}`} 
+                                        />
+                                    </button>
+                                ))}
+                            </div>
+                        )}
 
-                        {thumbnailImages.length > 0 && (
-                            <div className={`absolute bottom-4 left-4 right-4 grid gap-3 ${thumbnailImages.length === 1 ? 'grid-cols-1' : thumbnailImages.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
-                                {thumbnailImages.map((src, index) => (
+                        {/* Slide Navigation Arrows */}
+                        {productImages.length > 1 && (
+                            <>
+                                <button
+                                    onClick={() => setActiveImageIndex((prev) => (prev - 1 + productImages.length) % productImages.length)}
+                                    className="absolute left-4 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 backdrop-blur-sm text-gray-800 shadow-md hover:bg-white hover:scale-110 active:scale-95 transition-all opacity-0 group-hover/carousel:opacity-100 z-10"
+                                    title="Previous Image"
+                                >
+                                    <HiChevronLeft size={20} />
+                                </button>
+                                <button
+                                    onClick={() => setActiveImageIndex((prev) => (prev + 1) % productImages.length)}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 backdrop-blur-sm text-gray-800 shadow-md hover:bg-white hover:scale-110 active:scale-95 transition-all opacity-0 group-hover/carousel:opacity-100 z-10"
+                                    title="Next Image"
+                                >
+                                    <HiChevronRight size={20} />
+                                </button>
+                            </>
+                        )}
+
+                        {/* Premium Bottom Thumbnail Gallery */}
+                        {productImages.length > 1 && (
+                            <div className="absolute bottom-4 left-4 right-4 flex justify-center gap-2.5 z-10 bg-black/10 backdrop-blur-[2px] p-2 rounded-2xl max-w-max mx-auto border border-white/10 shadow-lg">
+                                {productImages.map((src, index) => (
                                     <button
                                         key={`${src}-${index}`}
-                                        className="h-36 overflow-hidden rounded-[14px] border border-white bg-white shadow-sm transition hover:border-[#1f1f1f] sm:h-44 xl:h-52"
+                                        onClick={() => setActiveImageIndex(index)}
+                                        className={`h-16 w-14 overflow-hidden rounded-xl border transition-all duration-300 ${activeImageIndex === index ? 'border-white ring-2 ring-white/50 scale-105 shadow-md' : 'border-transparent opacity-65 hover:opacity-100'}`}
                                     >
-                                        <img src={getImageUrl(src)} alt={`${product?.name || 'Product'} preview`} className="h-full w-full object-contain" />
+                                        <img src={getImageUrl(src)} alt={`${product?.name || 'Product'} thumbnail`} className="h-full w-full object-cover" />
                                     </button>
                                 ))}
                             </div>
