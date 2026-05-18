@@ -306,7 +306,7 @@ function ProductPage() {
                             <h1 className="mb-0 mt-4 text-3xl font-semibold tracking-normal text-[#1f1f1f] sm:text-4xl">
                                 {product?.name || 'Product'}
                             </h1>
-                            <p className="mb-0 mt-3 text-2xl font-bold">PKR {product?.price || '0'}</p>
+                            <p className="mb-0 mt-3 text-2xl font-bold">${product?.price || '0'}</p>
                             {product?.createdBy && (
                                 <p className="mb-0 mt-2 text-sm font-medium text-gray-500">By {product.createdBy}</p>
                             )}
@@ -635,7 +635,7 @@ function ProductPage() {
                                         ))}
                                         <span className="ml-1 text-xs font-semibold text-gray-400">4.0/5</span>
                                     </div>
-                                    <p className="m-0 text-sm font-bold">PKR {item.price}</p>
+                                    <p className="m-0 text-sm font-bold">${item.price}</p>
                                 </button>
                             ))}
                         </div>

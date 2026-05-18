@@ -156,7 +156,7 @@ const WishlistPage = () => {
                                     <p className="text-xs font-medium text-gray-400 mb-3">{item.category}</p>
                                     
                                     <div className="flex items-center justify-between">
-                                        <p className="text-xl font-black text-black">PKR {item.price}</p>
+                                        <p className="text-xl font-black text-black">${item.price}</p>
                                         <button 
                                             onClick={() => handleAddToCart(item)}
                                             className="h-10 w-10 flex items-center justify-center rounded-full bg-[#1f1f1f] text-white hover:bg-black hover:scale-110 transition-all shadow-md shadow-black/10"
