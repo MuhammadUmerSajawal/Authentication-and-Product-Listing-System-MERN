@@ -2,6 +2,26 @@
 
 A premium, full-stack MERN (MongoDB, Express, React, Node.js) application designed for a seamless e-commerce experience. This platform combines robust user authentication with advanced shopping features, including persistent carts, stock management, and a dynamic promo code system.
 
+## 📸 Application Preview
+
+Here is a visual showcase of the premium user experience:
+
+### 🖥️ Dashboard & Catalog
+A state-of-the-art catalog displaying available items with interactive wishlist buttons, real-time reviews, and a URL-driven product search filter.
+![Dashboard](screenshots/dashboard.png)
+
+### 🏷️ Product Details & Inventory
+Premium product details page highlighting multi-size stock level validation, dynamic "Out of Stock" alerts, and responsive size selection.
+![Product Details](screenshots/product_details.png)
+
+### 🛒 Persistent Cart Management
+A glassmorphic cart experience showing items, dynamic tax/delivery calculations, and a promo code engine (e.g., use **`SAVE10`** for a 10% discount).
+![Shopping Cart](screenshots/cart.png)
+
+### 💳 Simulated Checkout Flow
+Intuitive, seamless checkout flow requesting shipping info and card details, dynamically updating transaction records in LocalStorage.
+![Checkout Page](screenshots/checkout.png)
+
 ## 🚀 Key Features
 
 ### 🛒 Shopping Experience
